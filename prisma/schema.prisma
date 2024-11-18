@@ -57,3 +57,27 @@ model Location {
 
   @@map("Locations") 
 }
+
+model UserInEvent {
+  ticketID    String   @id @default(uuid()) 
+  event_id    String   // Você deve definir um modelo para Event ou adicionar a relação.
+  user_id     String   // Relacionamento com a tabela User.
+  feedback_id String?  // Relacionamento com a tabela Feedback (opcional, pois o feedback pode ser nulo).
+  createdAt   DateTime @default(now())
+  participated Boolean
+
+  user       User     @relation(fields: [user_id], references: [userID])
+  feedback   Feedback? @relation(fields: [feedback_id], references: [feedbackID])
+
+  @@map("UserInEvents")
+}
+
+model Feedback {
+  feedbackID  String   @id @default(uuid()) 
+  rating      Int      @db.Int
+  commentary  String   @db.VarChar(150)
+
+  userInEvent UserInEvent?
+
+  @@map("Feedbacks")
+}
