@@ -1,35 +1,27 @@
-import express from "express"
-import { PrismaClient } from "@prisma/client"
-import dotenv from "dotenv";
+import express from 'express';
+import { prisma } from './prismaClient.js';
+import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
-import routes from "./routes/routes.js";
-import swaggerUi from "swagger-ui-express"; // Adicione esta linha
+import routes from './routes/routes.js';
+import swaggerUi from 'swagger-ui-express';
 
-const app = express()
-app.use(express.json());
+const app = express();
 dotenv.config();
 const PORT = process.env.PORT || 3000;
 
-app.use("/api", routes);
-const prisma = new PrismaClient();
+app.use(express.json());
+app.use('/api', routes);
 
+// Swagger Docs
 const swaggerDocument = JSON.parse(fs.readFileSync(path.resolve('docs/swagger.json')));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+// Endpoint de teste
 app.get('/', (req, res) => {
-  res.json('hello there')
-})
-
-app.get('/userinevents', async (req, res) => {
-  try {
-    const userinevents = await prisma.userinevent.findMany();
-    res.json(userinevents);
-  } catch (err) {
-    console.log(err);
-  }
-})
+  res.json('hello there');
+});
 
 app.listen(PORT, () => {
-  console.log(`listening on port ${PORT}`)
-})
+  console.log(`listening on port ${PORT}`);
+});

@@ -1,14 +1,15 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+import { prisma } from '../prismaClient.js';
 
-module.exports = {
+const userInEventService = {
   async getAllUserInEvents() {
-    return prisma.userinevent.findMany(); 
+    return prisma.userInEvent.findMany(); 
   },
 
   async createUserInEvent(userineventData) {
-    return prisma.userinevent.create({
+    return prisma.userInEvent.create({
       data: userineventData,
     });
   },
 };
+
+export default userInEventService;

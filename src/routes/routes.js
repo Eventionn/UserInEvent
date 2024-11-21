@@ -3,7 +3,13 @@ import userInEventController from "../controllers/userInEventController.js";
 
 const router = Router();
 
-router.get('/', userInEventController.getAllUserInEvents);
-router.post('/', userInEventController.createUserInEvent);
+// UserInEvents Routes
+router.get('/userinevents', userInEventController.getAllUserInEvents);
+router.get('/userinevents/:id', userInEventController.getUserInEventById);
+router.post('/userinevents', userInEventController.createUserInEvent);
+router.put('/userinevents/:id', userInEventController.updateUserInEvent);
+router.delete('/userinevents/:id', userInEventController.deleteUserInEvent);
+
+// Feedback Routes
 
 export default router;

@@ -1,18 +1,16 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '../src/prismaClient.js';
 
 const userInEventsData = [
   {
-    ticketID: '5a1f9d3e-b12d-42fd-87f3-9f8f7c6c1a01', // ID de exemplo
-    user_id: '12345678-abcd-1234-ef00-1234567890ab', // Referência ao ID do usuário (de outro microserviço)
-    event_id: '98765432-4321-dcba-0987-abcdef123456', // Referência a um evento
+    ticketID: '5a1f9d3e-b12d-42fd-87f3-9f8f7c6c1a01', 
+    user_id: '12345678-abcd-1234-ef00-1234567890ab', 
+    event_id: '98765432-4321-dcba-0987-abcdef123456', 
     participated: true,
     createdAt: new Date(),
   },
   {
-    ticketID: '6b2f1e4f-c23e-53fe-98f4-af9e8d7e2b12', // ID de exemplo
-    user_id: '23456789-cdef-2345-ab01-2345678901bc', // Outro ID de usuário
+    ticketID: '6b2f1e4f-c23e-53fe-98f4-af9e8d7e2b12', 
+    user_id: '23456789-cdef-2345-ab01-2345678901bc', 
     event_id: '87654321-1234-cdef-1234-abcdef987654',
     participated: false,
     createdAt: new Date(),

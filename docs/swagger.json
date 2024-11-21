@@ -1,25 +1,25 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "API UserInEvent",
+    "title": "UserInEvent API",
     "version": "1.0.0",
-    "description": "API para gerir utilizadores em eventos."
+    "description": "API for managing users in events."
   },
   "servers": [
     {
-      "url": "http://localhost:5001",
+      "url": "http://localhost:5001/api",
       "description": "Local server"
     }
   ],
   "paths": {
     "/userinevents": {
       "get": {
-        "summary": "Obter todos os eventos de utilizadores",
+        "summary": "Get all user events",
         "operationId": "getAllUserInEvents",
         "tags": ["UserInEvent"],
         "responses": {
           "200": {
-            "description": "Lista de eventos de utilizadores",
+            "description": "List of user events",
             "content": {
               "application/json": {
                 "example": [
@@ -36,12 +36,12 @@
             }
           },
           "500": {
-            "description": "Erro interno ao obter os eventos de utilizadores"
+            "description": "Internal error while fetching user events"
           }
         }
       },
       "post": {
-        "summary": "Criar um novo evento de utilizador",
+        "summary": "Create a new user event",
         "operationId": "createUserInEvent",
         "tags": ["UserInEvent"],
         "requestBody": {
@@ -59,7 +59,7 @@
         },
         "responses": {
           "201": {
-            "description": "Evento de utilizador criado com sucesso",
+            "description": "User event successfully created",
             "content": {
               "application/json": {
                 "example": {
@@ -74,7 +74,142 @@
             }
           },
           "500": {
-            "description": "Erro interno ao criar evento de utilizador"
+            "description": "Internal error while creating user event"
+          }
+        }
+      }
+    },
+    "/userinevents/{id}": {
+      "get": {
+        "summary": "Get a user event by ID",
+        "operationId": "getUserInEventById",
+        "tags": ["UserInEvent"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "1a2b3c4d-5678-90ab-cdef-1234567890ab"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User event found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "ticketID": "1a2b3c4d-5678-90ab-cdef-1234567890ab",
+                  "event_id": "9876543210",
+                  "user_id": "12345",
+                  "feedback_id": null,
+                  "createdAt": "2024-11-18T12:00:00Z",
+                  "participated": true
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User event not found"
+          },
+          "500": {
+            "description": "Internal error while fetching user event by ID"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a user event by ID",
+        "operationId": "updateUserInEvent",
+        "tags": ["UserInEvent"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "1a2b3c4d-5678-90ab-cdef-1234567890ab"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "event_id": "9876543210",
+                "user_id": "12345",
+                "feedback_id": null,
+                "participated": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User event updated successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "ticketID": "1a2b3c4d-5678-90ab-cdef-1234567890ab",
+                  "event_id": "9876543210",
+                  "user_id": "12345",
+                  "feedback_id": null,
+                  "createdAt": "2024-11-18T12:00:00Z",
+                  "participated": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User event not found"
+          },
+          "500": {
+            "description": "Internal error while updating user event"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a user event by ID",
+        "operationId": "deleteUserInEvent",
+        "tags": ["UserInEvent"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "1a2b3c4d-5678-90ab-cdef-1234567890ab"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User event deleted successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "UserInEvent deleted successfully",
+                  "deletedUserInEvent": {
+                    "ticketID": "1a2b3c4d-5678-90ab-cdef-1234567890ab",
+                    "event_id": "9876543210",
+                    "user_id": "12345",
+                    "feedback_id": null,
+                    "createdAt": "2024-11-18T12:00:00Z",
+                    "participated": true
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User event not found"
+          },
+          "500": {
+            "description": "Internal error while deleting user event"
           }
         }
       }
@@ -126,7 +261,7 @@
           "commentary": {
             "type": "string",
             "maxLength": 150,
-            "example": "Evento muito bem organizado!"
+            "example": "Very well organized event!"
           }
         }
       }
