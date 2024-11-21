@@ -19,13 +19,30 @@ const userInEventController = {
    */
   async createUserInEvent(req, res) {
     try {
-      const newUserInEvent = await userService.createUserInEvent(req.body);
+      const { user_id, event_id, participated } = req.body;
+  
+      // (Opcional) Chame o microserviço de usuários para validar o `user_id`
+//      const userExists = await axios.get(`http://users-service/api/users/${user_id}`);
+//      if (!userExists) {
+//        return res.status(404).json({ message: 'User not found' });
+//      }
+  
+      // Criação do UserInEvent
+      const newUserInEvent = await prisma.userInEvent.create({
+        data: {
+          user_id,
+          event_id,
+          participated,
+        },
+      });
+  
       res.status(201).json(newUserInEvent);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Error creating userInEvents' });
+      res.status(500).json({ message: 'Error creating UserInEvent' });
     }
-  },
+  }
+  
   
   }
     export default userInEventController;

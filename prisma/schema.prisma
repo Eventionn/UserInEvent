@@ -10,74 +10,27 @@ generator client {
   binaryTargets = ["native", "linux-musl"]
 }
 
-
-model User {
-  userID      String   @id @default(uuid()) 
-  username    String   @db.VarChar(20)
-  phone       String   @db.VarChar(15)
-  email       String   @db.VarChar(50) @unique
-  password    String   @db.VarChar(50)
-  status      Boolean  @default(true) 
-  createdAt   DateTime @default(now())
-  loginType   String   
-  userType    UserType @relation(fields: [usertype_id], references: [userTypeID])
-  usertype_id String   @db.Uuid
-  address     Address?
-
-  @@map("Users") 
-}
-
-model UserType {
-  userTypeID String @id @default(uuid()) @db.Uuid
-  type       String @db.VarChar(20)
-  users      User[] 
-
-  @@map("UserTypes") 
-}
-
-model Address {
-  addressID    String   @id @default(uuid())
-  road         String   @db.VarChar(20)
-  roadNumber   Int
-  postCode     String   @db.VarChar(20)
-  NIF          String?  @db.VarChar(20) 
-  localtown    Location @relation(fields: [localtown_id], references: [localtownID])
-  localtown_id Int
-  user         User     @relation(fields: [user_id], references: [userID])
-  user_id      String   @unique
-
-  @@map("Addresses") 
-}
-
-model Location {
-  localtownID Int       @id @default(autoincrement())
-  localtown   String    @db.VarChar(100)
-  city        String    @db.VarChar(20)
-  addresses   Address[] 
-
-  @@map("Locations") 
-}
-
 model UserInEvent {
-  ticketID    String   @id @default(uuid()) 
-  event_id    String   // Você deve definir um modelo para Event ou adicionar a relação.
-  user_id     String   // Relacionamento com a tabela User.
-  feedback_id String?  // Relacionamento com a tabela Feedback (opcional, pois o feedback pode ser nulo).
-  createdAt   DateTime @default(now())
-  participated Boolean
+  ticketID      String   @id @default(uuid())
+  event_id      String   // ID de um evento
+  user_id       String   // ID do usuário de outro serviço
+  feedback_id   String?  @unique // Torna feedback_id único para relação um-para-um
+  createdAt     DateTime @default(now())
+  participated  Boolean
 
-  user       User     @relation(fields: [user_id], references: [userID])
-  feedback   Feedback? @relation(fields: [feedback_id], references: [feedbackID])
+  feedback      Feedback? @relation(fields: [feedback_id], references: [feedbackID]) // Define relação com Feedback
 
   @@map("UserInEvents")
 }
 
 model Feedback {
-  feedbackID  String   @id @default(uuid()) 
-  rating      Int      @db.Int
-  commentary  String   @db.VarChar(150)
+  feedbackID    String   @id @default(uuid())
+  rating        Int
+  commentary    String   @db.VarChar(150)
 
-  userInEvent UserInEvent?
+  userInEvent   UserInEvent? // Relacionamento opcional com UserInEvent
 
   @@map("Feedbacks")
 }
+
+
