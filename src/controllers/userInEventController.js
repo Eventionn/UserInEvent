@@ -88,7 +88,7 @@ const userInEventController = {
    */
   async updateUserInEvent(req, res) {
     const { id } = req.params;
-    const { user_id, event_id, participated } = req.body;
+    const { user_id, event_id, participated,feedback_id } = req.body;
 
     try {
       const updatedUserInEvent = await prisma.userInEvent.update({
@@ -99,6 +99,7 @@ const userInEventController = {
           user_id,
           event_id,
           participated,
+          feedback_id,
         },
       });
 

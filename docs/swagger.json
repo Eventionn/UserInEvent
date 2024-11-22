@@ -12,7 +12,7 @@
     }
   ],
   "paths": {
-    "/userinevents": {
+    "/tickets": {
       "get": {
         "summary": "Get all user events",
         "operationId": "getAllUserInEvents",
@@ -79,7 +79,7 @@
         }
       }
     },
-    "/userinevents/{id}": {
+    "/tickets/{id}": {
       "get": {
         "summary": "Get a user event by ID",
         "operationId": "getUserInEventById",
@@ -213,6 +213,223 @@
           }
         }
       }
+    },
+  "/feedbacks": {
+    "get": {
+      "summary": "Get all Feedbacks",
+      "operationId": "getAllFeedbacks",
+      "tags": ["Feedback"],
+      "responses": {
+        "200": {
+          "description": "List of all feedbacks",
+          "content": {
+            "application/json": {
+              "example": [
+                {
+                  "feedbackID": "1a2b3c4d-5678-90ab-cdef-1234567890ab",
+                  "rating": 5,
+                  "commentary": "Great event!"
+                }
+              ]
+            }
+          }
+        },
+        "500": {
+          "description": "Error fetching feedbacks"
+        }
+      }
+    },
+    "post": {
+      "summary": "Create a new Feedback",
+      "operationId": "createFeedback",
+      "tags": ["Feedback"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "example": {
+              "rating": 5,
+              "commentary": "Very well organized!"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Feedback created successfully",
+          "content": {
+            "application/json": {
+              "example": {
+                "feedbackID": "1a2b3c4d-5678-90ab-cdef-1234567890ab",
+                "rating": 5,
+                "commentary": "Very well organized!"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Invalid feedback data"
+        },
+        "500": {
+          "description": "Error creating feedback"
+        }
+      }
+    }
+  },
+  "/feedbacks/{id}": {
+    "get": {
+      "summary": "Get a Feedback by ID",
+      "operationId": "getFeedbackById",
+      "tags": ["Feedback"],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": "1a2b3c4d-5678-90ab-cdef-1234567890ab"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Feedback retrieved successfully",
+          "content": {
+            "application/json": {
+              "example": {
+                "feedbackID": "1a2b3c4d-5678-90ab-cdef-1234567890ab",
+                "rating": 5,
+                "commentary": "Great event!"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Feedback not found"
+        },
+        "500": {
+          "description": "Error fetching feedback"
+        }
+      }
+    },
+    "put": {
+      "summary": "Update a Feedback",
+      "operationId": "updateFeedback",
+      "tags": ["Feedback"],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": "1a2b3c4d-5678-90ab-cdef-1234567890ab"
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "example": {
+              "rating": 4,
+              "commentary": "Good event!"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Feedback updated successfully",
+          "content": {
+            "application/json": {
+              "example": {
+                "feedbackID": "1a2b3c4d-5678-90ab-cdef-1234567890ab",
+                "rating": 4,
+                "commentary": "Good event!"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Feedback not found"
+        },
+        "500": {
+          "description": "Error updating feedback"
+        }
+      }
+    },
+    "delete": {
+      "summary": "Delete a Feedback",
+      "operationId": "deleteFeedback",
+      "tags": ["Feedback"],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": "1a2b3c4d-5678-90ab-cdef-1234567890ab"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Feedback deleted successfully",
+          "content": {
+            "application/json": {
+              "example": {
+                "message": "Feedback deleted successfully"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Feedback not found"
+        },
+        "500": {
+          "description": "Error deleting feedback"
+        }
+      }
+    }
+  },
+  "/feedbacks/event/{eventId}": {
+    "get": {
+      "summary": "Get Feedbacks for a specific Event",
+      "operationId": "getEventFeedbacks",
+      "tags": ["Feedback"],
+      "parameters": [
+        {
+          "name": "eventId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": "9876543210"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "List of feedbacks for the event",
+          "content": {
+            "application/json": {
+              "example": [
+                {
+                  "feedbackID": "1a2b3c4d-5678-90ab-cdef-1234567890ab",
+                  "rating": 5,
+                  "commentary": "Amazing event!"
+                }
+              ]
+            }
+          }
+        },
+        "500": {
+          "description": "Error fetching feedbacks for the event"
+        }
+      }
     }
   },
   "components": {
@@ -267,4 +484,5 @@
       }
     }
   }
+}
 }
