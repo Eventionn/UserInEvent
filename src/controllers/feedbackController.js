@@ -82,7 +82,7 @@ const feedbackController = {
         return res.status(400).json({ message: 'Rating must be a number between 1 and 5' });
       }
 
-      const newFeedback = await feedbackService.createFeedback();
+      const newFeedback = await feedbackService.createFeedback(req.body);
 
       res.status(201).json(newFeedback);
       
