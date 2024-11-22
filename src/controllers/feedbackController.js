@@ -1,4 +1,5 @@
 import { prisma } from '../prismaClient.js';
+import feedbackService from '../services/feedbackService.js';
 
 const feedbackController = {
 
@@ -10,7 +11,12 @@ const feedbackController = {
    */
   async getAllFeedbacks(req, res) {
     try {
-      const feedbacks = await prisma.feedback.findMany();
+      const feedbacks = await feedbackService.getAllFeedbacks();
+
+      if (feedbacks == null || feedbacks.length === 0) {
+        return res.status(404).json({ message: 'No events found' });
+      }
+
       res.status(200).json(feedbacks);
     } catch (error) {
       console.error(error);
@@ -28,11 +34,7 @@ const feedbackController = {
   async getFeedbackById(req, res) {
     const { id } = req.params; // gets id from param url
     try {
-      const feedback = await prisma.feedback.findUnique({
-        where: {
-          feedbackID: id, 
-        },
-      });
+      const feedback = await feedbackService.getFeedbackById(id);
   
       if (!feedback) {
         return res.status(404).json({ message: 'Feedback not found' });
@@ -54,21 +56,10 @@ const feedbackController = {
    */
     async getEventFeedbacks(req, res) {
         const { eventId } = req.params; // get event id from param url
-        try {
-            // get todos UserInEvents relacionados ao event id
-            const userInEvents = await prisma.userInEvent.findMany({
-            where: {
-                event_id: eventId,
-                feedback_id: { not: null }, // apenas feedbacks não null
-            },
-            include: {
-                feedback: true, // feedback data
-            },
-            });
 
-            console.log(userInEvents);
-            // get apenas feedbacks
-            const feedbacks = userInEvents.map((userInEvent) => userInEvent.feedback);
+        try {
+
+          const feedbacks = await feedbackService.getEventFeedbacks(eventId);
 
             res.status(200).json(feedbacks);
         } catch (error) {
@@ -91,14 +82,10 @@ const feedbackController = {
         return res.status(400).json({ message: 'Rating must be a number between 1 and 5' });
       }
 
-      const newFeedback = await prisma.feedback.create({
-        data: {
-          rating,
-          commentary,
-        },
-      });
+      const newFeedback = await feedbackService.createFeedback();
 
       res.status(201).json(newFeedback);
+      
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Error creating feedback' });
@@ -115,25 +102,18 @@ const feedbackController = {
    */
   async updateFeedback(req, res) {
     const { id } = req.params;
-    const { rating, commentary } = req.body;
+    const feedbackData= req.body;
     try {
-      const existingFeedback = await prisma.feedback.findUnique({
-        where: { feedbackID: id },
-      });
+      const existingFeedback = await feedbackService.getFeedbackById(id);
 
       if (!existingFeedback) {
         return res.status(404).json({ message: 'Feedback not found' });
       }
 
-      const updatedFeedback = await prisma.feedback.update({
-        where: { feedbackID: id },
-        data: {
-          rating,
-          commentary,
-        },
-      });
+      const updatedFeedback = await eventService.updateEvent(eventId, feedbackData);
 
       res.status(200).json(updatedFeedback);
+
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Error updating feedback' });
@@ -150,19 +130,15 @@ const feedbackController = {
   async deleteFeedback(req, res) {
     const { id } = req.params;
     try {
-      const existingFeedback = await prisma.feedback.findUnique({
-        where: { feedbackID: id },
-      });
+      const existingFeedback = await feedbackService.getFeedbackById(id);
 
       if (!existingFeedback) {
         return res.status(404).json({ message: 'Feedback not found' });
       }
 
-      await prisma.feedback.delete({
-        where: { feedbackID: id },
-      });
-
+      await feedbackService.deleteFeedback(id);
       res.status(200).json({ message: 'Feedback deleted successfully' });
+
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Error deleting feedback' });

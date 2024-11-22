@@ -1,4 +1,5 @@
 import { prisma } from '../prismaClient.js';
+import userInEventService from '../services/userInEventService.js';
 
 const userInEventController = {
 
@@ -10,8 +11,14 @@ const userInEventController = {
    */
   async getAllUserInEvents(req, res) {
     try {
-      const userinevents = await prisma.userInEvent.findMany();
+      const userinevents = await userInEventService.getAllUserInEvents();
+
+      if (userinevents == null || userinevents.length === 0) {
+        return res.status(404).json({ message: 'No userinevents found' });
+      }
+
       res.status(200).json(userinevents);
+
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Error fetching userInEvents' });
@@ -28,17 +35,14 @@ const userInEventController = {
   async getUserInEventById(req, res) {
     const { id } = req.params; // gets id from param url
     try {
-      const userInEvent = await prisma.userInEvent.findUnique({
-        where: {
-          ticketID: id, 
-        },
-      });
+      const userInEvent = await userInEventService.getUserInEventById(id);
   
       if (!userInEvent) {
         return res.status(404).json({ message: 'UserInEvent not found' });
       }
   
       res.status(200).json(userInEvent);
+
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Error fetching UserInEvent by ID' });
@@ -54,6 +58,9 @@ const userInEventController = {
    */
   async createUserInEvent(req, res) {
     const { user_id, event_id, participated } = req.body;
+    if (!user_id || !event_id || !participated) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
 
     try {
       // (Opcional) Chame o microserviço de utilizadores para validar o `user_id`
@@ -63,15 +70,10 @@ const userInEventController = {
       // }
 
       // Criar UserInEvent
-      const newUserInEvent = await prisma.userInEvent.create({
-        data: {
-          user_id,
-          event_id,
-          participated,
-        },
-      });
+      const newUserInEvent = await userInEventService.createUserInEvent(req.body);
 
       res.status(201).json(newUserInEvent);
+
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Error creating UserInEvent' });
@@ -88,27 +90,19 @@ const userInEventController = {
    */
   async updateUserInEvent(req, res) {
     const { id } = req.params;
-    const { user_id, event_id, participated,feedback_id } = req.body;
 
-    try {
-      const updatedUserInEvent = await prisma.userInEvent.update({
-        where: {
-          ticketID: id, // ticketID como chave primária
-        },
-        data: {
-          user_id,
-          event_id,
-          participated,
-          feedback_id,
-        },
-      });
+  try {
+    const userInEventData = req.body;
+
+    const updatedUserInEvent = await userInEventService.updateUserInEvent(id, userInEventData);
+    if (!updatedUserInEvent) {
+      return res.status(404).json({ message: 'UserInEvent not found' });
+    }
 
       res.status(200).json(updatedUserInEvent);
+
     } catch (error) {
       console.error(error);
-      if (error.code === 'P2025') {
-        return res.status(404).json({ message: 'UserInEvent not found' });
-      }
       res.status(500).json({ message: 'Error updating UserInEvent' });
     }
   },
@@ -124,18 +118,16 @@ const userInEventController = {
     const { id } = req.params;
 
     try {
-      const deletedUserInEvent = await prisma.userInEvent.delete({
-        where: {
-          ticketID: id, // ticketID como chave primária
-        },
-      });
+      const deletedUserInEvent = await prisma.userInEvent.delete(id);
 
-      res.status(200).json({ message: 'UserInEvent deleted successfully', deletedUserInEvent });
-    } catch (error) {
-      console.error(error);
-      if (error.code === 'P2025') {
+      if (!deletedUserInEvent) {
         return res.status(404).json({ message: 'UserInEvent not found' });
       }
+
+      res.status(200).json({ message: 'UserInEvent deleted successfully', deletedUserInEvent });
+
+    } catch (error) {
+      console.error(error);
       res.status(500).json({ message: 'Error deleting UserInEvent' });
     }
   },
