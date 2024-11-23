@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: userineventservice
-        image: a23893/userineventservice:main 
+        image: a23893/userineventservice:latest 
         ports:
         - containerPort: 5003
         env:

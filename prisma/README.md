@@ -10,7 +10,13 @@ npx prisma migrate dev --name init
 node seed.js
 
 
-//Advanced
+//COMANDOS PARA O CMD 
+//Entrar no terminal da API a rodar num pod do minikube - "userineventservice-deployment-764588f6b6-kcdbm" é o nome do pod da API
+kubectl exec -it userineventservice-deployment-764588f6b6-kcdbm -- /bin/sh
+
+
+
+//Advanced AUXILIAR
 
 //Criar nova migration
 //Criar uma nova migração: Quando você faz mudanças no schema, você precisa gerar uma nova migração para refletir essas alterações no banco de dados. O Prisma gera migrações para que o banco de dados fique sincronizado com o seu schema.
