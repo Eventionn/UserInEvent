@@ -71,7 +71,7 @@ const userInEventController = {
       // console.log("user", userExists)
 
       const userExistss = await axios.get(`http://userservice:5001/api/users/${user_id}`);
-      console.log("usertttt", userExists)
+      console.log("usertttt", userExistss)
       if (!userExistss) {
         return res.status(404).json({ message: 'User not found' });
       }
