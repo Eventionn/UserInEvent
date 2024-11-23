@@ -63,11 +63,14 @@ const userInEventController = {
     }
 
     try {
+
+
       // (Opcional) Chame o microserviço de utilizadores para validar o `user_id`
-      // const userExists = await axios.get(`http://users-service/api/users/${user_id}`);
-      // if (!userExists) {
-      //   return res.status(404).json({ message: 'User not found' });
-      // }
+      const userExists = await axios.get(`http://users-userservice/api/users/${user_id}`);
+      console.log("user", userExists)
+      if (!userExists) {
+        return res.status(404).json({ message: 'User not found' });
+      }
 
       // Criar UserInEvent
       const newUserInEvent = await userInEventService.createUserInEvent(req.body);

@@ -7,7 +7,7 @@ kubectl apply -f userineventservice-service.yaml
 kubectl apply -f postgres-storage.yaml
 kubectl apply -f postgres-deployment.yaml 
 
-
+kubectl logs -f userineventservice-deployment-6c7947988d-vsgrx
 
 PRIMEIRO:
 userineventservice-deployment
