@@ -52,7 +52,7 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-    - port: 5432           # Porta do serviço
-      targetPort: 5433     # Porta no container
+    - port: 5433           # Porta do serviço (exterior)
+      targetPort: 5432     # Porta no container
   selector:
     app: userineventservice-db        # Seleciona o StatefulSet pelo label
