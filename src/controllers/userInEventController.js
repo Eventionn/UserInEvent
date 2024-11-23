@@ -66,9 +66,9 @@ const userInEventController = {
     try {
 
 
-      // (Opcional) Chame o microserviço de utilizadores para validar o `user_id`
-      const userExists = await axios.get(`http://userservice:5001/api/users/${user_id}`);
-      console.log("user", userExists)
+      // // (Opcional) Chame o microserviço de utilizadores para validar o `user_id`
+      // const userExists = await axios.get(`http://userservice:5001/api/users/${user_id}`);
+      // console.log("user", userExists)
 
       const userExistss = await axios.get(`http://localhost:5001/api/users/${user_id}`);
       console.log("usertttt", userExists)
