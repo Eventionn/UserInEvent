@@ -4,7 +4,8 @@
 kubectl apply -f userineventservice-deployment.yaml
 kubectl apply -f userineventservice-service.yaml
 
-
+kubectl apply -f postgres-storage.yaml
+kubectl apply -f postgres-deployment.yaml 
 
 
 
