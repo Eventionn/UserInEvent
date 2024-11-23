@@ -1,5 +1,6 @@
 import { prisma } from '../prismaClient.js';
 import userInEventService from '../services/userInEventService.js';
+import axios from 'axios';
 
 const userInEventController = {
 
