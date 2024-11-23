@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: postgres-pv-volume
+  name: userineventservice-pv-volume
   labels:
     type: local
     app: userineventservice-db
@@ -20,7 +20,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgres-pv-claim
+  name: userineventservice-pv-claim
   labels:
     app: userineventservice-db
 spec:
