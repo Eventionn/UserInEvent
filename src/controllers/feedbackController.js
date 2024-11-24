@@ -92,6 +92,9 @@ const feedbackController = {
       if (!ticket) {
         return res.status(404).json({ message: 'UserInEVent not found' });
       }
+      if (ticket.feedback_id !== null && ticket.feedback_id !== undefined) {
+        return res.status(400).json({ message: 'This Ticket already has a feedback' });
+      }
 
       const newFeedback = await feedbackService.createFeedback({
         rating,

@@ -2,376 +2,371 @@
   "openapi": "3.0.0",
   "info": {
     "title": "UserInEvent API",
-    "version": "1.0.0",
-    "description": "API for managing users in events.",
-    "license": {
-      "name": "MIT License",
-      "url": "https://opensource.org/licenses/MIT"
-    }
+    "description": "API for managing UserInEvent entities and feedbacks.",
+    "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "http://localhost:5003/api",
-      "description": "Local server"
+      "url": "/api"
     }
   ],
   "paths": {
     "/tickets": {
       "get": {
-        "summary": "Get all user events",
+        "summary": "Get all tickets",
+        "description": "Retrieve a list of all tickets (UserInEvents).",
         "operationId": "getAllUserInEvents",
-        "tags": ["UserInEvent"],
+        "tags": ["UserInEvents"],
         "responses": {
           "200": {
-            "description": "List of user events",
+            "description": "List of UserInEvents",
             "content": {
               "application/json": {
-                "example": [
-                  {
-                    "ticketID": "1a2b3c4d-5678-90ab-cdef-1234567890ab",
-                    "event_id": "9876543210",
-                    "user_id": "12345",
-                    "feedback_id": null,
-                    "createdAt": "2024-11-18T12:00:00Z",
-                    "participated": true
-                  }
-                ]
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/UserInEvent" }
+                }
               }
             }
           },
           "500": {
-            "description": "Internal error while fetching user events"
+            "description": "Error fetching UserInEvents",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       },
       "post": {
-        "summary": "Create a new user event",
+        "summary": "Create a new ticket",
+        "description": "Create a new UserInEvent (ticket) for the logged-in user.",
         "operationId": "createUserInEvent",
+        "tags": ["UserInEvents"],
         "security": [
           {
-            "bearerAuth": []
+            "BearerAuth": []
           }
         ],
-        "tags": ["UserInEvent"],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
+              "schema": { 
+                "$ref": "#/components/schemas/UserInEvent" 
+              },
               "example": {
-                "event_id": "9876543210",
-                "user_id": "12345",
-                "feedback_id": null,
-                "participated": true
+                "event_id": "87654321-1234-cdef-1234-abcdef987654"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "User event successfully created",
+            "description": "UserInEvent created successfully",
             "content": {
               "application/json": {
-                "example": {
-                  "ticketID": "1a2b3c4d-5678-90ab-cdef-1234567890ab",
-                  "event_id": "9876543210",
-                  "user_id": "12345",
-                  "feedback_id": null,
-                  "createdAt": "2024-11-18T12:00:00Z",
-                  "participated": true
-                }
+                "schema": { "$ref": "#/components/schemas/UserInEvent" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
               }
             }
           },
           "500": {
-            "description": "Internal error while creating user event"
+            "description": "Error creating UserInEvent",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
     },
     "/tickets/my": {
       "get": {
-        "summary": "Get all tickets for the logged-in user",
+        "summary": "Get my tickets",
+        "description": "Retrieve a list of tickets for the logged-in user.",
         "operationId": "getUserTickets",
-        "tags": ["UserInEvent"],
+        "tags": ["UserInEvents"],
         "security": [
           {
-            "bearerAuth": []
+            "BearerAuth": []
           }
         ],
         "responses": {
           "200": {
-            "description": "List of tickets for the logged-in user",
+            "description": "List of UserInEvents for the logged-in user",
             "content": {
               "application/json": {
-                "example": [
-                  {
-                    "ticketID": "1a2b3c4d-5678-90ab-cdef-1234567890ab",
-                    "event_id": "9876543210",
-                    "user_id": "12345",
-                    "feedback_id": null,
-                    "createdAt": "2024-11-18T12:00:00Z",
-                    "participated": true
-                  }
-                ]
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/UserInEvent" }
+                }
               }
             }
           },
-          "404": {
-            "description": "No tickets found for the user"
+          "401": {
+            "description": "Unauthorized access",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           },
           "500": {
-            "description": "Internal error while fetching tickets"
+            "description": "Error fetching UserInEvents",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
     },
     "/tickets/{id}": {
       "get": {
-        "summary": "Get a user event by ID",
+        "summary": "Get ticket by ID",
+        "description": "Retrieve a UserInEvent by its ID.",
         "operationId": "getUserInEventById",
-        "tags": ["UserInEvent"],
+        "tags": ["UserInEvents"],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "example": "1a2b3c4d-5678-90ab-cdef-1234567890ab"
-            }
+            "schema": { "type": "string" },
+            "description": "The ID of the UserInEvent"
           }
         ],
         "responses": {
           "200": {
-            "description": "User event found",
+            "description": "The requested UserInEvent",
             "content": {
               "application/json": {
-                "example": {
-                  "ticketID": "1a2b3c4d-5678-90ab-cdef-1234567890ab",
-                  "event_id": "9876543210",
-                  "user_id": "12345",
-                  "feedback_id": null,
-                  "createdAt": "2024-11-18T12:00:00Z",
-                  "participated": true
-                }
+                "schema": { "$ref": "#/components/schemas/UserInEvent" }
               }
             }
           },
           "404": {
-            "description": "User event not found"
+            "description": "UserInEvent not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           },
           "500": {
-            "description": "Internal error while fetching user event by ID"
+            "description": "Error fetching UserInEvent",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       },
       "put": {
-        "summary": "Update a user event by ID",
+        "summary": "Update a ticket",
+        "description": "Modify an existing UserInEvent by its ID.",
         "operationId": "updateUserInEvent",
-        "tags": ["UserInEvent"],
+        "tags": ["UserInEvents"],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "example": "1a2b3c4d-5678-90ab-cdef-1234567890ab"
-            }
+            "schema": { "type": "string" },
+            "description": "The ID of the UserInEvent"
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "example": {
-                "event_id": "9876543210",
-                "user_id": "12345",
-                "feedback_id": null,
-                "participated": false
-              }
+              "schema": { "$ref": "#/components/schemas/UserInEvent" }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "User event updated successfully",
+            "description": "UserInEvent updated successfully",
             "content": {
               "application/json": {
-                "example": {
-                  "ticketID": "1a2b3c4d-5678-90ab-cdef-1234567890ab",
-                  "event_id": "9876543210",
-                  "user_id": "12345",
-                  "feedback_id": null,
-                  "createdAt": "2024-11-18T12:00:00Z",
-                  "participated": false
-                }
+                "schema": { "$ref": "#/components/schemas/UserInEvent" }
               }
             }
           },
           "404": {
-            "description": "User event not found"
+            "description": "UserInEvent not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           },
           "500": {
-            "description": "Internal error while updating user event"
+            "description": "Error updating UserInEvent",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       },
       "delete": {
-        "summary": "Delete a user event by ID",
+        "summary": "Delete a ticket",
+        "description": "Remove a UserInEvent by its ID.",
         "operationId": "deleteUserInEvent",
-        "tags": ["UserInEvent"],
+        "tags": ["UserInEvents"],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "example": "1a2b3c4d-5678-90ab-cdef-1234567890ab"
-            }
+            "schema": { "type": "string" },
+            "description": "The ID of the UserInEvent"
           }
         ],
         "responses": {
           "200": {
-            "description": "User event deleted successfully",
+            "description": "UserInEvent deleted successfully",
             "content": {
               "application/json": {
-                "example": {
-                  "message": "UserInEvent deleted successfully",
-                  "deletedUserInEvent": {
-                    "ticketID": "1a2b3c4d-5678-90ab-cdef-1234567890ab",
-                    "event_id": "9876543210",
-                    "user_id": "12345",
-                    "feedback_id": null,
-                    "createdAt": "2024-11-18T12:00:00Z",
-                    "participated": true
-                  }
-                }
+                "schema": { "$ref": "#/components/schemas/Success" }
               }
             }
           },
           "404": {
-            "description": "User event not found"
+            "description": "UserInEvent not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           },
           "500": {
-            "description": "Internal error while deleting user event"
+            "description": "Error deleting UserInEvent",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
     },
     "/tickets/{id}/participation": {
       "put": {
-        "summary": "Update participation status of a user in an event",
+        "summary": "Update participation status",
+        "description": "Set a UserInEvent as participated.",
         "operationId": "updateUserParticipationInEvent",
-        "tags": ["UserInEvent"],
+        "tags": ["UserInEvents"],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "example": "1a2b3c4d-5678-90ab-cdef-1234567890ab"
-            }
+            "schema": { "type": "string" },
+            "description": "The ID of the UserInEvent"
           }
         ],
         "responses": {
           "200": {
-            "description": "User participation updated successfully",
+            "description": "UserInEvent participation updated successfully",
             "content": {
               "application/json": {
-                "example": {
-                  "ticketID": "1a2b3c4d-5678-90ab-cdef-1234567890ab",
-                  "event_id": "9876543210",
-                  "user_id": "12345",
-                  "feedback_id": null,
-                  "createdAt": "2024-11-18T12:00:00Z",
-                  "participated": true
-                }
+                "schema": { "$ref": "#/components/schemas/UserInEvent" }
               }
             }
           },
           "404": {
-            "description": "UserInEvent not found"
+            "description": "UserInEvent not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           },
           "500": {
-            "description": "Internal error while updating participation"
+            "description": "Error updating participation",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
     },
     "/feedbacks": {
       "get": {
-        "summary": "Get all Feedbacks",
+        "summary": "Get all feedbacks",
+        "description": "Retrieve a list of all feedbacks.",
         "operationId": "getAllFeedbacks",
-        "tags": ["Feedback"],
+        "tags": ["Feedbacks"],
         "responses": {
           "200": {
-            "description": "List of all feedbacks",
+            "description": "List of feedbacks",
             "content": {
               "application/json": {
-                "example": [
-                  {
-                    "feedbackID": "1a2b3c4d-5678-90ab-cdef-1234567890ab",
-                    "rating": 5,
-                    "commentary": "Great event!"
-                  }
-                ]
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Feedback" }
+                }
               }
             }
           },
           "500": {
-            "description": "Error fetching feedbacks"
+            "description": "Error fetching feedbacks",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
     },
     "/feedbacks/{ticketID}": {
       "post": {
-        "summary": "Create a new Feedback",
+        "summary": "Create a new feedback",
+        "description": "Submit feedback for a specific UserInEvent (ticket).",
         "operationId": "createFeedback",
+        "tags": ["Feedbacks"],
         "security": [
           {
-            "bearerAuth": []
+            "BearerAuth": []
           }
         ],
-        "tags": ["Feedback"],
         "parameters": [
           {
             "name": "ticketID",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "example": "f0584109-ad3a-4c5c-81e4-7f59a3d20ec2"
+              "type": "string"
             },
-            "description": "ID of the ticket associated with the feedback"
+            "description": "The ID of the UserInEvent (ticket) for which feedback is being submitted"
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
+              "schema": { "$ref": "#/components/schemas/NewFeedback" },
               "example": {
                 "rating": 5,
-                "commentary": "Very well organized!"
-              },
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "rating": {
-                    "type": "integer",
-                    "description": "Rating of the event (1-5)",
-                    "example": 5
-                  },
-                  "commentary": {
-                    "type": "string",
-                    "description": "Feedback commentary",
-                    "example": "Very well organized!"
-                  }
-                },
-                "required": ["rating", "commentary"]
+                "commentary": "Amazing event, very well organized!"
               }
             }
           }
@@ -381,86 +376,90 @@
             "description": "Feedback created successfully",
             "content": {
               "application/json": {
-                "example": {
-                  "feedbackID": "1a2b3c4d-5678-90ab-cdef-1234567890ab",
-                  "rating": 5,
-                  "commentary": "Very well organized!"
-                }
+                "schema": { "$ref": "#/components/schemas/Feedback" }
               }
             }
           },
           "400": {
-            "description": "Invalid feedback data"
-          },
-          "404": {
-            "description": "Ticket not found"
+            "description": "Missing required fields or invalid data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           },
           "500": {
-            "description": "Error creating feedback"
+            "description": "Error creating feedback",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
     },
     "/feedbacks/{id}": {
       "get": {
-        "summary": "Get a Feedback by ID",
+        "summary": "Get feedback by ID",
+        "description": "Retrieve feedback by its ID.",
         "operationId": "getFeedbackById",
-        "tags": ["Feedback"],
+        "tags": ["Feedbacks"],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "example": "1a2b3c4d-5678-90ab-cdef-1234567890ab"
-            }
+            "schema": { "type": "string" },
+            "description": "The ID of the Feedback"
           }
         ],
         "responses": {
           "200": {
-            "description": "Feedback retrieved successfully",
+            "description": "The requested feedback",
             "content": {
               "application/json": {
-                "example": {
-                  "feedbackID": "1a2b3c4d-5678-90ab-cdef-1234567890ab",
-                  "rating": 5,
-                  "commentary": "Great event!"
-                }
+                "schema": { "$ref": "#/components/schemas/Feedback" }
               }
             }
           },
           "404": {
-            "description": "Feedback not found"
+            "description": "Feedback not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           },
           "500": {
-            "description": "Error fetching feedback"
+            "description": "Error fetching feedback",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       },
       "put": {
-        "summary": "Update a Feedback",
+        "summary": "Update a feedback",
+        "description": "Modify an existing feedback by its ID.",
         "operationId": "updateFeedback",
-        "tags": ["Feedback"],
+        "tags": ["Feedbacks"],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "example": "1a2b3c4d-5678-90ab-cdef-1234567890ab"
-            }
+            "schema": { "type": "string" },
+            "description": "The ID of the Feedback"
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "example": {
-                "rating": 4,
-                "commentary": "Good event!"
-              }
+              "schema": { "$ref": "#/components/schemas/Feedback" }
             }
           }
         },
@@ -469,35 +468,40 @@
             "description": "Feedback updated successfully",
             "content": {
               "application/json": {
-                "example": {
-                  "feedbackID": "1a2b3c4d-5678-90ab-cdef-1234567890ab",
-                    "rating": 4,
-                    "commentary": "Good event!"
-                }
+                "schema": { "$ref": "#/components/schemas/Feedback" }
               }
             }
           },
           "404": {
-            "description": "Feedback not found"
+            "description": "Feedback not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           },
           "500": {
-            "description": "Error updating feedback"
+            "description": "Error updating feedback",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       },
       "delete": {
-        "summary": "Delete a Feedback",
+        "summary": "Delete feedback",
+        "description": "Remove a feedback by its ID.",
         "operationId": "deleteFeedback",
-        "tags": ["Feedback"],
+        "tags": ["Feedbacks"],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "example": "1a2b3c4d-5678-90ab-cdef-1234567890ab"
-            }
+            "schema": { "type": "string" },
+            "description": "The ID of the Feedback"
           }
         ],
         "responses": {
@@ -505,35 +509,42 @@
             "description": "Feedback deleted successfully",
             "content": {
               "application/json": {
-                "example": {
-                  "message": "Feedback deleted successfully"
-                }
+                "schema": { "$ref": "#/components/schemas/Success" }
               }
             }
           },
           "404": {
-            "description": "Feedback not found"
+            "description": "Feedback not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           },
           "500": {
-            "description": "Error deleting feedback"
+            "description": "Error deleting feedback",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
     },
     "/feedbacks/event/{eventId}": {
       "get": {
-        "summary": "Get Feedbacks for a specific Event",
+        "summary": "Get feedbacks by event",
+        "description": "Retrieve feedbacks for a specific event.",
         "operationId": "getEventFeedbacks",
-        "tags": ["Feedback"],
+        "tags": ["Feedbacks"],
         "parameters": [
           {
             "name": "eventId",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "example": "9876543210"
-            }
+            "schema": { "type": "string" },
+            "description": "The ID of the Event"
           }
         ],
         "responses": {
@@ -541,22 +552,33 @@
             "description": "List of feedbacks for the event",
             "content": {
               "application/json": {
-                "example": [
-                  {
-                    "feedbackID": "1a2b3c4d-5678-90ab-cdef-1234567890ab",
-                    "rating": 5,
-                    "commentary": "Amazing event!"
-                  }
-                ]
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Feedback" }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Event not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
               }
             }
           },
           "500": {
-            "description": "Error fetching feedbacks for the event"
+            "description": "Error fetching feedbacks for event",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
-    },
+    }
+  },
   "components": {
     "securitySchemes": {
       "bearerAuth": {
@@ -570,52 +592,44 @@
       "UserInEvent": {
         "type": "object",
         "properties": {
-          "ticketID": {
-            "type": "string",
-            "example": "1a2b3c4d-5678-90ab-cdef-1234567890ab"
-          },
-          "event_id": {
-            "type": "string",
-            "example": "9876543210"
-          },
-          "user_id": {
-            "type": "string",
-            "example": "12345"
-          },
-          "feedback_id": {
-            "type": "string",
-            "example": null
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2024-11-18T12:00:00Z"
-          },
-          "participated": {
-            "type": "boolean",
-            "example": true
-          }
+          "id": { "type": "string" },
+          "userId": { "type": "string" },
+          "eventId": { "type": "string" },
+          "participationStatus": { "type": "string" }
         }
       },
       "Feedback": {
         "type": "object",
         "properties": {
-          "feedbackID": {
-            "type": "string",
-            "example": "1a2b3c4d-5678-90ab-cdef-1234567890ab"
-          },
-          "rating": {
-            "type": "integer",
-            "example": 5
-          },
-          "commentary": {
-            "type": "string",
-            "maxLength": 150,
-            "example": "Very well organized event!"
-          }
+          "id": { "type": "string" },
+          "userId": { "type": "string" },
+          "eventId": { "type": "string" },
+          "rating": { "type": "integer" },
+          "comments": { "type": "string" }
+        }
+      },
+      "NewFeedback": {
+        "type": "object",
+        "properties": {
+          "userId": { "type": "string" },
+          "eventId": { "type": "string" },
+          "rating": { "type": "integer" },
+          "comments": { "type": "string" }
+        },
+        "required": ["userId", "eventId", "rating"]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" }
+        }
+      },
+      "Success": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" }
         }
       }
     }
   }
-}
 }

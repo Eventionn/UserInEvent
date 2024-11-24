@@ -85,7 +85,7 @@ const userInEventController = {
    * @returns {UserInEvent} The created UserInEvent object
    */
   async createUserInEvent(req, res) {
-    const { user_id, event_id, participated } = req.body;
+    const { event_id} = req.body;
     if (!event_id) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
@@ -93,7 +93,7 @@ const userInEventController = {
     try {
 
       //obter id do user logado
-      //const userId = req.user.userID;
+      const userId = req.user.userID;
 
       //
       // const userExistss = await axios.get(`http://userservice:5001/api/users/${user_id}`);
@@ -103,8 +103,8 @@ const userInEventController = {
       // }
 
       //if (evento existe)
-      //const eventExistsResponse = await axios.get(`http://eventservice:5002/api/events/${event_id}`);
-      const eventExistsResponse = await axios.get(`http://localhost:5002/api/events/${event_id}`);
+      const eventExistsResponse = await axios.get(`http://eventservice:5002/api/events/${event_id}`);
+      //const eventExistsResponse = await axios.get(`http://localhost:5002/api/events/${event_id}`);
        if (!eventExistsResponse || !eventExistsResponse.data) {
          return res.status(404).json({ message: 'Event not found' });
        }
@@ -113,18 +113,16 @@ const userInEventController = {
 
 
       // Criar UserInEvent
-      //req.body.user_id = userId;  //usar id do user logado
+      req.body.user_id = userId;  //usar id do user logado
       req.body.participated = false;
       req.body.event_id = event.eventID;
       const newUserInEvent = await userInEventService.createUserInEvent(req.body);
 
 
       // Criar pagamento
-    
-      //const paymentResponse = await axios.post(`http://localhost:5004/api/payments`, {
       if (event.price && event.price > 0) {
-        // const paymentResponse = await axios.post(`http://paymentservice:5004/api/payments`, { 
-          const paymentResponse = await axios.post(`http://localhost:5004/api/payments`, { 
+          const paymentResponse = await axios.post(`http://paymentservice:5004/api/payments`, { 
+          //const paymentResponse = await axios.post(`http://localhost:5004/api/payments`, { 
           totalValue: event.price,
           ticketID: newUserInEvent.ticketID,
           paymentType: "Mbway",
