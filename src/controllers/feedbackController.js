@@ -1,5 +1,6 @@
 import { prisma } from '../prismaClient.js';
 import feedbackService from '../services/feedbackService.js';
+import userInEventService from '../services/userInEventService.js';
 
 const feedbackController = {
 
@@ -77,12 +78,32 @@ const feedbackController = {
    */
   async createFeedback(req, res) {
     const { rating, commentary } = req.body;
+    const { ticketID } = req.params; 
+    
     try {
+    
       if (typeof rating !== 'number' || rating < 1 || rating > 5) {
         return res.status(400).json({ message: 'Rating must be a number between 1 and 5' });
       }
 
-      const newFeedback = await feedbackService.createFeedback(req.body);
+      console.log(ticketID);
+
+      const ticket = await userInEventService.getUserInEventById(ticketID);
+      if (!ticket) {
+        return res.status(404).json({ message: 'UserInEVent not found' });
+      }
+
+      const newFeedback = await feedbackService.createFeedback({
+        rating,
+        commentary,
+      });
+
+      const updatedticket = await userInEventService.updateUserInEvent(ticketID, {
+        feedback_id: newFeedback.feedbackID,
+      });
+      if (!updatedticket) {
+        return res.status(404).json({ message: 'UserInEvent not found or could not be updated' });
+      }
 
       res.status(201).json(newFeedback);
       

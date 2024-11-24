@@ -51,6 +51,33 @@ const userInEventController = {
   },
 
   /**
+   * Get UserInEvent tickets
+   * @route {GET} /userinevent/my
+   * @param {string} id - The ID of the UserInEvent
+   * @returns {Array} List of tickets
+   */
+  async getUserTickets(req, res) {
+    try {
+      console.log(req.user)
+      const userId = req.user.userID;
+
+      console.log(userId)
+
+      const tickets = await userInEventService.getUserTickets(userId);
+
+      if (tickets == null || tickets.length === 0) {
+        return res.status(404).json({ message: 'No tickets found' });
+      }
+
+      res.status(200).json(tickets);
+
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching tickets' });
+    }
+  },
+
+  /**
    * Create a new UserInEvent
    * @auth none
    * @route {POST} /userinevents
@@ -59,15 +86,14 @@ const userInEventController = {
    */
   async createUserInEvent(req, res) {
     const { user_id, event_id, participated } = req.body;
-    if (!user_id || !event_id || !participated) {
+    if (!event_id) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
     try {
 
-      // // (Opcional) Chame o microserviço de utilizadores para validar o `user_id`
-      // const userExists = await axios.get(`http://userservice:5001/api/users/${user_id}`);
-      // console.log("user", userExists)
+      //obter id do user logado
+      //const userId = req.user.userID;
 
       //
       // const userExistss = await axios.get(`http://userservice:5001/api/users/${user_id}`);
@@ -76,65 +102,46 @@ const userInEventController = {
       //   return res.status(404).json({ message: 'User not found' });
       // }
 
-      // if (!userExistsResponse || !userExistsResponse.data) {
-      //   return res.status(404).json({ message: 'User not found' });
-      // }
-      //console.log("User validation successful:", userExistsResponse.data);
-
       //if (evento existe)
-      // const eventExistsResponse = await axios.get(`http://eventservice:5002/api/events/${event_id}`);
-      // if (!eventExistsResponse || !eventExistsResponse.data) {
-      //   return res.status(404).json({ message: 'Event not found' });
-      // }
-      // console.log("Event validation successful:", eventExistsResponse.data);
-      // const event = eventExistsResponse.data;
-      
-      //if (preço evento != 0)
-    //   //3. Verificar se o preço do evento é diferente de zero
-    //   if (event.price && event.price > 0) {
-    //     // Criar pagamento
-    //     const paymentResponse = await axios.post(`http://paymentservice:5003/api/payments`, {
-    //       user_id,
-    //       event_id,
-    //       amount: event.price, // Envia o preço do evento
-    //     });
-  
-    //     if (!paymentResponse || !paymentResponse.data) {
-    //       return res.status(500).json({ message: 'Payment creation failed' });
-    //     }
-  
-    //     console.log("Payment created successfully:", paymentResponse.data);
-    //   }
+      //const eventExistsResponse = await axios.get(`http://eventservice:5002/api/events/${event_id}`);
+      const eventExistsResponse = await axios.get(`http://localhost:5002/api/events/${event_id}`);
+       if (!eventExistsResponse || !eventExistsResponse.data) {
+         return res.status(404).json({ message: 'Event not found' });
+       }
+       console.log("Event validation successful:", eventExistsResponse.data);
+       const event = eventExistsResponse.data;
 
 
-    // Criar UserInEvent
+      // Criar UserInEvent
+      //req.body.user_id = userId;  //usar id do user logado
+      req.body.participated = false;
+      req.body.event_id = event.eventID;
       const newUserInEvent = await userInEventService.createUserInEvent(req.body);
 
 
       // Criar pagamento
-      // const paymentResponse = await axios.post(`http://paymentservice:5003/api/payments`, {
-      //   totalValue,
-      //   ticketID,
-      //   paymentType,
-      // });
+    
       //const paymentResponse = await axios.post(`http://localhost:5004/api/payments`, {
-      const paymentResponse = await axios.post(`http://paymentservice:5004/api/payments`, {  
-        totalValue: 100,
-        ticketID: newUserInEvent.ticketID,
-        paymentType: "Mbway",
-      });
-
+      if (event.price && event.price > 0) {
+        // const paymentResponse = await axios.post(`http://paymentservice:5004/api/payments`, { 
+          const paymentResponse = await axios.post(`http://localhost:5004/api/payments`, { 
+          totalValue: event.price,
+          ticketID: newUserInEvent.ticketID,
+          paymentType: "Mbway",
+      })
+    
       if (!paymentResponse || !paymentResponse.data) {
         return res.status(500).json({ message: 'Payment creation failed' });
       }
 
       console.log("Payment created successfully:", paymentResponse.data);
 
+    };
 
       res.status(201).json(newUserInEvent);
 
     } catch (error) {
-      console.error(error);
+      console.error(error);feedback_id
       res.status(500).json({ message: 'Error creating UserInEvent' });
     }
   },
@@ -154,6 +161,35 @@ const userInEventController = {
     const userInEventData = req.body;
 
     const updatedUserInEvent = await userInEventService.updateUserInEvent(id, userInEventData);
+    if (!updatedUserInEvent) {
+      return res.status(404).json({ message: 'UserInEvent not found' });
+    }
+
+      res.status(200).json(updatedUserInEvent);
+
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error updating UserInEvent' });
+    }
+  },
+
+  /**
+   * Update an existing UserInEvent
+   * @auth none
+   * @route {PUT} /userinevents/{id}/participation
+   * @param {String} id - The ID of the UserInEvent to update
+   * @bodyparam {UserInEvent} userInEvent - The UserInEvent data to update
+   * @returns {UserInEvent} The updated UserInEvent object
+   */
+  async updateUserParticipationInEvent(req, res) {
+    const { id } = req.params;
+
+  try {
+
+    const updatedUserInEvent = await userInEventService.updateUserInEvent(id,{
+      participated: true,
+    });
+
     if (!updatedUserInEvent) {
       return res.status(404).json({ message: 'UserInEvent not found' });
     }

@@ -23,6 +23,18 @@ const userInEventService = {
     });
   },
 
+  /**
+   * Get all user tickets
+   * @returns {Promise<Array>} List of user tickets
+   */
+    async getUserTickets(userId) {
+      return prisma.userInEvent.findMany({
+        where: {
+          user_id: userId, 
+        },
+      });
+    },
+
    /**
    * Create a new UserInEvent
    * @param {Object} userInEvent - The data for creating the UserInEvent
