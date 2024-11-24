@@ -65,19 +65,71 @@ const userInEventController = {
 
     try {
 
-
       // // (Opcional) Chame o microserviço de utilizadores para validar o `user_id`
       // const userExists = await axios.get(`http://userservice:5001/api/users/${user_id}`);
       // console.log("user", userExists)
 
-      const userExistss = await axios.get(`http://userservice:5001/api/users/${user_id}`);
-      console.log("usertttt", userExistss)
-      if (!userExistss) {
-        return res.status(404).json({ message: 'User not found' });
+      //
+      // const userExistss = await axios.get(`http://userservice:5001/api/users/${user_id}`);
+      // console.log("usertttt", userExistss)
+      // if (!userExistss) {
+      //   return res.status(404).json({ message: 'User not found' });
+      // }
+
+      // if (!userExistsResponse || !userExistsResponse.data) {
+      //   return res.status(404).json({ message: 'User not found' });
+      // }
+      //console.log("User validation successful:", userExistsResponse.data);
+
+      //if (evento existe)
+      // const eventExistsResponse = await axios.get(`http://eventservice:5002/api/events/${event_id}`);
+      // if (!eventExistsResponse || !eventExistsResponse.data) {
+      //   return res.status(404).json({ message: 'Event not found' });
+      // }
+      // console.log("Event validation successful:", eventExistsResponse.data);
+      // const event = eventExistsResponse.data;
+      
+      //if (preço evento != 0)
+    //   //3. Verificar se o preço do evento é diferente de zero
+    //   if (event.price && event.price > 0) {
+    //     // Criar pagamento
+    //     const paymentResponse = await axios.post(`http://paymentservice:5003/api/payments`, {
+    //       user_id,
+    //       event_id,
+    //       amount: event.price, // Envia o preço do evento
+    //     });
+  
+    //     if (!paymentResponse || !paymentResponse.data) {
+    //       return res.status(500).json({ message: 'Payment creation failed' });
+    //     }
+  
+    //     console.log("Payment created successfully:", paymentResponse.data);
+    //   }
+
+
+    // Criar UserInEvent
+      const newUserInEvent = await userInEventService.createUserInEvent(req.body);
+
+
+      // Criar pagamento
+      // const paymentResponse = await axios.post(`http://paymentservice:5003/api/payments`, {
+      //   totalValue,
+      //   ticketID,
+      //   paymentType,
+      // });
+      //const paymentResponse = await axios.post(`http://localhost:5004/api/payments`, {
+      const paymentResponse = await axios.post(`http://paymentservice:5004/api/payments`, {  
+        totalValue: 100,
+        ticketID: newUserInEvent.ticketID,
+        paymentType: "Mbway",
+      });
+
+      if (!paymentResponse || !paymentResponse.data) {
+        return res.status(500).json({ message: 'Payment creation failed' });
       }
 
-      // Criar UserInEvent
-      const newUserInEvent = await userInEventService.createUserInEvent(req.body);
+      console.log("Payment created successfully:", paymentResponse.data);
+
 
       res.status(201).json(newUserInEvent);
 
