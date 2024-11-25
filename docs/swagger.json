@@ -46,7 +46,7 @@
         "tags": ["UserInEvents"],
         "security": [
           {
-            "BearerAuth": []
+            "bearerAuth": []
           }
         ],
         "requestBody": {
