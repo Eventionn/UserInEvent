@@ -98,7 +98,7 @@
         "tags": ["UserInEvents"],
         "security": [
           {
-            "BearerAuth": []
+            "bearerAuth": []
           }
         ],
         "responses": {
@@ -345,7 +345,7 @@
         "tags": ["Feedbacks"],
         "security": [
           {
-            "BearerAuth": []
+            "bearerAuth": []
           }
         ],
         "parameters": [
