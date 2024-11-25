@@ -10,5 +10,5 @@ spec:
   type: LoadBalancer
   ports:
     - protocol: TCP
-      port: 5003        #Porta Interna Serviço 
-      targetPort: 5003  #Porta Pod
+      port: 5003        
+      targetPort: 5003  

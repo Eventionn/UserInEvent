@@ -6,7 +6,7 @@ metadata:
   labels:
     app: userineventservice-db
 spec:
-  serviceName: "userineventservice-db-service" # Nome do serviço usado para resolver o endereço interno do banco
+  serviceName: "userineventservice-db-service" 
   replicas: 1
   selector:
     matchLabels:
@@ -25,12 +25,12 @@ spec:
             - name: POSTGRES_PASSWORD
               value: "userineventservice_pass"      
             - name: POSTGRES_DB
-              value: "userineventservice_db"    # Nome DB
+              value: "userineventservice_db"    
           ports:
-            - containerPort: 5432     # Porta padrão do PostgreSQL
+            - containerPort: 5432     
           volumeMounts:
             - name: userineventservice-db-data
-              mountPath: /var/lib/postgresql/data # Diretório de dados
+              mountPath: /var/lib/postgresql/data 
   volumeClaimTemplates:
     - metadata:
         name: userineventservice-db-data
@@ -52,7 +52,7 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-    - port: 5433           # Porta do serviço (exterior)
-      targetPort: 5432     # Porta no container
+    - port: 5433           
+      targetPort: 5432     
   selector:
-    app: userineventservice-db        # Seleciona o StatefulSet pelo label
+    app: userineventservice-db        
