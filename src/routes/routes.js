@@ -9,6 +9,7 @@ const router = Router();
 router.get('/tickets', userInEventController.getAllUserInEvents);
 router.get('/tickets/my', verifyToken, userInEventController.getUserTickets);
 router.get('/tickets/:id', userInEventController.getUserInEventById);
+router.get('/tickets/event/:eventId', userInEventController.getTicketsByEvent);
 router.post('/tickets', verifyToken, userInEventController.createUserInEvent);
 router.put('/tickets/:id', userInEventController.updateUserInEvent);
 router.put('/tickets/:id/participation', userInEventController.updateUserParticipationInEvent);

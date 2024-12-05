@@ -78,6 +78,30 @@ const userInEventController = {
   },
 
   /**
+   * Get Tickets by Event ID
+   * @auth none
+   * @route {GET} /tickets/{eventId}
+   * @param {String} eventId - The ID of the UserInEvent
+   * @returns {UserInEvent} The UserInEvent object
+   */
+    async getTicketsByEvent(req, res) {
+      const { eventId } = req.params; // gets id from param url
+      try {
+        const tickets = await userInEventService.getTicketsByEvent(eventId);
+    
+        if (!tickets) {
+          return res.status(404).json({ message: 'Tickets not found' });
+        }
+    
+        res.status(200).json(tickets);
+  
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error fetching Event Tickets' });
+      }
+    },  
+
+  /**
    * Create a new UserInEvent
    * @auth none
    * @route {POST} /userinevents
@@ -139,7 +163,7 @@ const userInEventController = {
       res.status(201).json(newUserInEvent);
 
     } catch (error) {
-      console.error(error);feedback_id
+      console.error(error);
       res.status(500).json({ message: 'Error creating UserInEvent' });
     }
   },

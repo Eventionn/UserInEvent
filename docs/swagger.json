@@ -90,6 +90,52 @@
         }
       }
     },
+    "/tickets/event/{eventId}": {
+      "get": {
+        "summary": "Get tickets by event ID",
+        "description": "Retrieve a list of UserInEvents (tickets) for a specific event by its ID.",
+        "operationId": "getTicketsByEventId",
+        "tags": ["UserInEvents"],
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The ID of the event"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of UserInEvents for the event",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/UserInEvent" }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tickets not found for the event",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Error fetching tickets for the event",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/tickets/my": {
       "get": {
         "summary": "Get my tickets",
