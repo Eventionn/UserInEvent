@@ -142,7 +142,7 @@ const userInEventController = {
           //const paymentResponse = await axios.post(http://paymentservice:5004/api/payments, { 
           const paymentResponse = await axios.post(`http://localhost:5004/api/payments`, {
             totalValue: event.price,
-            ticketID: null, // O ticket ainda não foi criado, será associado depois
+            ticketID: null, // ticket não foi criado só é associado depois
             paymentType: "Mbway",
           });
   
@@ -161,8 +161,8 @@ const userInEventController = {
         }
       }
   
-      // Criar UserInEvent somente após o pagamento ser bem-sucedido ou se o evento for gratuito
-      req.body.user_id = userId; // Usar ID do usuário logado
+      // criar ticket após o pagamento ou se o evento for gratuito
+      req.body.user_id = userId; // usar userId logado
       req.body.participated = false;
       req.body.event_id = event.eventID;
   
