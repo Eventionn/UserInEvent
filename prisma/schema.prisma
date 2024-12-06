@@ -11,7 +11,7 @@ generator client {
 }
 
 model UserInEvent {
-  ticketID      String   @id @default(uuid())
+  ticketID      String   @id @default(uuid()) @db.Uuid
   event_id      String   // ID de um evento
   user_id       String   // ID do usuário de outro serviço
   feedback_id   String?  @unique // Torna feedback_id único para relação um-para-um

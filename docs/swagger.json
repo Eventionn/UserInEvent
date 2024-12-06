@@ -16,7 +16,7 @@
         "summary": "Get all tickets",
         "description": "Retrieve a list of all tickets (UserInEvents).",
         "operationId": "getAllUserInEvents",
-        "tags": ["UserInEvents"],
+        "tags": ["Tickets"],
         "responses": {
           "200": {
             "description": "List of UserInEvents",
@@ -43,7 +43,7 @@
         "summary": "Create a new ticket",
         "description": "Create a new UserInEvent (ticket) for the logged-in user.",
         "operationId": "createUserInEvent",
-        "tags": ["UserInEvents"],
+        "tags": ["Tickets"],
         "security": [
           {
             "bearerAuth": []
@@ -95,7 +95,7 @@
         "summary": "Get tickets by event ID",
         "description": "Retrieve a list of UserInEvents (tickets) for a specific event by its ID.",
         "operationId": "getTicketsByEventId",
-        "tags": ["UserInEvents"],
+        "tags": ["Tickets"],
         "parameters": [
           {
             "name": "eventId",
@@ -141,7 +141,7 @@
         "summary": "Get my tickets",
         "description": "Retrieve a list of tickets for the logged-in user.",
         "operationId": "getUserTickets",
-        "tags": ["UserInEvents"],
+        "tags": ["Tickets"],
         "security": [
           {
             "bearerAuth": []
@@ -183,7 +183,7 @@
         "summary": "Get ticket by ID",
         "description": "Retrieve a UserInEvent by its ID.",
         "operationId": "getUserInEventById",
-        "tags": ["UserInEvents"],
+        "tags": ["Tickets"],
         "parameters": [
           {
             "name": "id",
@@ -224,7 +224,7 @@
         "summary": "Update a ticket",
         "description": "Modify an existing UserInEvent by its ID.",
         "operationId": "updateUserInEvent",
-        "tags": ["UserInEvents"],
+        "tags": ["Tickets"],
         "parameters": [
           {
             "name": "id",
@@ -273,7 +273,7 @@
         "summary": "Delete a ticket",
         "description": "Remove a UserInEvent by its ID.",
         "operationId": "deleteUserInEvent",
-        "tags": ["UserInEvents"],
+        "tags": ["Tickets"],
         "parameters": [
           {
             "name": "id",
@@ -311,27 +311,83 @@
         }
       }
     },
-    "/tickets/{id}/participation": {
-      "put": {
-        "summary": "Update participation status",
-        "description": "Set a UserInEvent as participated.",
-        "operationId": "updateUserParticipationInEvent",
-        "tags": ["UserInEvents"],
+    "/tickets/qrcode/{ticketId}": {
+      "get": {
+        "summary": "Generate QR Code for a ticket",
+        "description": "Generates a QR Code image for a ticket by its ID.",
+        "operationId": "generateQrCode",
+        "tags": ["Tickets"],
         "parameters": [
           {
-            "name": "id",
+            "name": "ticketId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" },
-            "description": "The ID of the UserInEvent"
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the ticket for which to generate the QR Code"
           }
         ],
         "responses": {
           "200": {
-            "description": "UserInEvent participation updated successfully",
+            "description": "QR Code image generated successfully",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ticket not found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/UserInEvent" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error generating QR Code",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tickets/qrcode/read/{ticketId}": {
+      "put": {
+        "summary": "Mark ticket as participated by qr code",
+        "description": "Updates the participation status of a UserInEvent ticket to 'participated'.",
+        "operationId": "updateUserParticipationInEvent",
+        "tags": ["Tickets"],
+        "parameters": [
+          {
+            "name": "ticketId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the ticket to update"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ticket participation status updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserInEvent"
+                }
               }
             }
           },
@@ -339,15 +395,19 @@
             "description": "UserInEvent not found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           },
           "500": {
-            "description": "Error updating participation",
+            "description": "Error updating UserInEvent",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -580,7 +640,7 @@
     },
     "/feedbacks/event/{eventId}": {
       "get": {
-        "summary": "Get feedbacks by event",
+        "summary": "Get Event Feedbacks",
         "description": "Retrieve feedbacks for a specific event.",
         "operationId": "getEventFeedbacks",
         "tags": ["Feedbacks"],

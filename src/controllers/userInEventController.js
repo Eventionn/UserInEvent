@@ -1,7 +1,7 @@
 import { prisma } from '../prismaClient.js';
 import userInEventService from '../services/userInEventService.js';
 import axios from 'axios';
-const QRCode = require('qrcode');
+import QRCode from 'qrcode';
 
 const userInEventController = {
 
@@ -128,41 +128,47 @@ const userInEventController = {
       // }
 
       //if (evento existe)
-      const eventExistsResponse = await axios.get(`http://eventservice:5002/api/events/${event_id}`);
-      //const eventExistsResponse = await axios.get(`http://localhost:5002/api/events/${event_id}`);
-       if (!eventExistsResponse || !eventExistsResponse.data) {
-         return res.status(404).json({ message: 'Event not found' });
-       }
-       console.log("Event validation successful:", eventExistsResponse.data);
-       const event = eventExistsResponse.data;
+      //const eventExistsResponse = await axios.get(`http://eventservice:5002/api/events/${event_id}`);
+      const eventExistsResponse = await axios.get(`http://localhost:5002/api/events/${event_id}`);
+      if (!eventExistsResponse || !eventExistsResponse.data) {
+        return res.status(404).json({ message: 'Event not found' });
+      }
+      console.log("Event validation successful:", eventExistsResponse.data);
+      const event = eventExistsResponse.data;
 
 
-      // Criar UserInEvent
-      req.body.user_id = userId;  //usar id do user logado
+      if (event.price && event.price > 0) {
+        try {
+          //const paymentResponse = await axios.post(http://paymentservice:5004/api/payments, { 
+          const paymentResponse = await axios.post(`http://localhost:5004/api/payments`, {
+            totalValue: event.price,
+            ticketID: null, // O ticket ainda não foi criado, será associado depois
+            paymentType: "Mbway",
+          });
+  
+          if (!paymentResponse || !paymentResponse.data) {
+            return res.status(503).json({
+              message: 'Payment creation failed, payment service is currently unavailable. Please try again later.'
+            });
+          }
+  
+          console.log("Payment created successfully:", paymentResponse.data);
+        } catch (paymentError) {
+          console.error("Error during payment creation:", paymentError);
+          return res.status(503).json({
+            message: 'Payment service is currently unavailable. Please try again later.'
+          });
+        }
+      }
+  
+      // Criar UserInEvent somente após o pagamento ser bem-sucedido ou se o evento for gratuito
+      req.body.user_id = userId; // Usar ID do usuário logado
       req.body.participated = false;
       req.body.event_id = event.eventID;
+  
       const newUserInEvent = await userInEventService.createUserInEvent(req.body);
-
-
-      // Criar pagamento
-      if (event.price && event.price > 0) {
-          const paymentResponse = await axios.post(`http://paymentservice:5004/api/payments`, { 
-          //const paymentResponse = await axios.post(`http://localhost:5004/api/payments`, { 
-          totalValue: event.price,
-          ticketID: newUserInEvent.ticketID,
-          paymentType: "Mbway",
-      })
-    
-      if (!paymentResponse || !paymentResponse.data) {
-        return res.status(500).json({ message: 'Payment creation failed' });
-      }
-
-      console.log("Payment created successfully:", paymentResponse.data);
-
-    };
-
       res.status(201).json(newUserInEvent);
-
+  
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Error creating UserInEvent' });
@@ -184,35 +190,6 @@ const userInEventController = {
     const userInEventData = req.body;
 
     const updatedUserInEvent = await userInEventService.updateUserInEvent(id, userInEventData);
-    if (!updatedUserInEvent) {
-      return res.status(404).json({ message: 'UserInEvent not found' });
-    }
-
-      res.status(200).json(updatedUserInEvent);
-
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error updating UserInEvent' });
-    }
-  },
-
-  /**
-   * Update an existing UserInEvent
-   * @auth none
-   * @route {PUT} /userinevents/{id}/participation
-   * @param {String} id - The ID of the UserInEvent to update
-   * @bodyparam {UserInEvent} userInEvent - The UserInEvent data to update
-   * @returns {UserInEvent} The updated UserInEvent object
-   */
-  async updateUserParticipationInEvent(req, res) {
-    const { id } = req.params;
-
-  try {
-
-    const updatedUserInEvent = await userInEventService.updateUserInEvent(id,{
-      participated: true,
-    });
-
     if (!updatedUserInEvent) {
       return res.status(404).json({ message: 'UserInEvent not found' });
     }
@@ -251,7 +228,7 @@ const userInEventController = {
   },
 
   /**
-   * Generate a QrCode for ticket by its ID
+   * Generates a QrCode for ticket by its ID
    * @auth none
    * @route {GET} /tickets/qrcode/{ticketId}
    * @param {String} ticketId - The ID of the ticket
@@ -259,6 +236,11 @@ const userInEventController = {
    */
   async generateQrCode(req, res) {
     const { ticketId } = req.params; // ticketid
+
+    if(ticketId == null){
+      return res.status(400).json({ message: 'Invalid ticketId!' });
+    }
+
     const data = `ticket:${ticketId}`; // dados para codificar
 
     try {
@@ -277,6 +259,40 @@ const userInEventController = {
     } catch (error) {
         console.error('Error generating QR Code:', error);
         return res.status(500).json({ message: 'Error generating QR Code' });
+    }
+  },
+
+  /**
+   * Update an existing UserInEvent
+   * @auth none
+   * @route {PUT} /tickets/qrcode/read/{ticketId}
+   * @param {String} ticketId - The ID of the UserInEvent to update
+   * @bodyparam {UserInEvent} userInEvent - The UserInEvent data to update
+   * @returns {UserInEvent} The updated UserInEvent object
+   */
+  async updateUserParticipationInEvent(req, res) {
+    const { ticketId } = req.params;
+
+    if(ticketId == null){
+      return res.status(400).json({ message: 'Invalid ticketId!' });
+    }
+
+  try {
+
+    //updates user participation in the ticket 
+    const updatedTicket = await userInEventService.updateUserInEvent(ticketId,{
+      participated: true,
+    });
+
+    if (!updatedTicket) {
+      return res.status(404).json({ message: 'UserInEvent not found' });
+    }
+
+      res.status(200).json(updatedTicket);
+
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error updating UserInEvent' });
     }
   },
 

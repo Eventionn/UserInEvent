@@ -12,10 +12,10 @@ router.get('/tickets/:id', userInEventController.getUserInEventById);
 router.get('/tickets/event/:eventId', userInEventController.getTicketsByEvent);
 router.post('/tickets', verifyToken, userInEventController.createUserInEvent);
 router.put('/tickets/:id', userInEventController.updateUserInEvent);
-router.put('/tickets/:id/participation', userInEventController.updateUserParticipationInEvent);
+//router.put('/tickets/:id/participation', userInEventController.updateUserParticipationInEvent);
 router.delete('/tickets/:id', userInEventController.deleteUserInEvent);
 router.get('/tickets/qrcode/:ticketId', userInEventController.generateQrCode);
-//router.get('/tickets/read/:ticketId', userInEventController.readQrCode);
+router.put('/tickets/qrcode/read/:ticketId', userInEventController.updateUserParticipationInEvent);
 //rota do ticket qr code
 
 // Feedback Routes
