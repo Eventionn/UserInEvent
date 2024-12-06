@@ -12,9 +12,9 @@ generator client {
 
 model UserInEvent {
   ticketID      String   @id @default(uuid()) @db.Uuid
-  event_id      String   // ID de um evento
-  user_id       String   // ID do usuário de outro serviço
-  feedback_id   String?  @unique // Torna feedback_id único para relação um-para-um
+  event_id      String   @db.Uuid 
+  user_id       String   @db.Uuid
+  feedback_id   String?  @unique @db.Uuid
   createdAt     DateTime @default(now())
   participated  Boolean
 
@@ -24,7 +24,7 @@ model UserInEvent {
 }
 
 model Feedback {
-  feedbackID    String   @id @default(uuid())
+  feedbackID    String   @id @default(uuid()) @db.Uuid
   rating        Int
   commentary    String   @db.VarChar(150)
 
