@@ -1,6 +1,7 @@
 import { prisma } from '../prismaClient.js';
 import userInEventService from '../services/userInEventService.js';
 import axios from 'axios';
+const QRCode = require('qrcode');
 
 const userInEventController = {
 
@@ -248,6 +249,37 @@ const userInEventController = {
       res.status(500).json({ message: 'Error deleting UserInEvent' });
     }
   },
+
+  /**
+   * Generate a QrCode for ticket by its ID
+   * @auth none
+   * @route {GET} /tickets/qrcode/{ticketId}
+   * @param {String} ticketId - The ID of the ticket
+   * @returns {Image} The QR Code image
+   */
+  async generateQrCode(req, res) {
+    const { ticketId } = req.params; // ticketid
+    const data = `ticket:${ticketId}`; // dados para codificar
+
+    try {
+        // gerar qrcode como string Base64
+        const qrCodeImage = await QRCode.toDataURL(data);
+
+        // remover o prefixo "data:image/png;base64," 
+        const base64Image = qrCodeImage.split(',')[1];
+
+        // converter Base64 para buffer para enviar como imagem PNG
+        const buffer = Buffer.from(base64Image, 'base64');
+
+        // cabeçalho de resposta como imagem PNG
+        res.setHeader('Content-Type', 'image/png');
+        return res.status(200).send(buffer); // enviar imagem diretamente
+    } catch (error) {
+        console.error('Error generating QR Code:', error);
+        return res.status(500).json({ message: 'Error generating QR Code' });
+    }
+  },
+
 };
 
 export default userInEventController;

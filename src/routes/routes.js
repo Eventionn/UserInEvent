@@ -14,6 +14,8 @@ router.post('/tickets', verifyToken, userInEventController.createUserInEvent);
 router.put('/tickets/:id', userInEventController.updateUserInEvent);
 router.put('/tickets/:id/participation', userInEventController.updateUserParticipationInEvent);
 router.delete('/tickets/:id', userInEventController.deleteUserInEvent);
+router.get('/tickets/qrcode/:ticketId', userInEventController.generateQrCode);
+//router.get('/tickets/read/:ticketId', userInEventController.readQrCode);
 //rota do ticket qr code
 
 // Feedback Routes
