@@ -8,7 +8,7 @@ const userInEventController = {
   /**
    * Get all UserInEvents
    * @auth none
-   * @route {GET} /userinevents
+   * @route {GET} /tickets
    * @returns {Array} List of UserInEvents
    */
   async getAllUserInEvents(req, res) {
@@ -30,7 +30,7 @@ const userInEventController = {
   /**
    * Get a UserInEvent by its ID
    * @auth none
-   * @route {GET} /userinevents/{id}
+   * @route {GET} /tickets/{id}
    * @param {String} id - The ID of the UserInEvent
    * @returns {UserInEvent} The UserInEvent object
    */
@@ -53,7 +53,7 @@ const userInEventController = {
 
   /**
    * Get UserInEvent tickets
-   * @route {GET} /userinevent/my
+   * @route {GET} /tickets/my
    * @param {string} id - The ID of the UserInEvent
    * @returns {Array} List of tickets
    */
@@ -105,7 +105,7 @@ const userInEventController = {
   /**
    * Create a new UserInEvent
    * @auth none
-   * @route {POST} /userinevents
+   * @route {POST} /tickets
    * @bodyparam {UserInEvent} userInEvent - The UserInEvent object to create
    * @returns {UserInEvent} The created UserInEvent object
    */
@@ -178,7 +178,7 @@ const userInEventController = {
   /**
    * Update an existing UserInEvent
    * @auth none
-   * @route {PUT} /userinevents/{id}
+   * @route {PUT} /tickets/{id}
    * @param {String} id - The ID of the UserInEvent to update
    * @bodyparam {UserInEvent} userInEvent - The UserInEvent data to update
    * @returns {UserInEvent} The updated UserInEvent object
@@ -205,7 +205,7 @@ const userInEventController = {
   /**
    * Delete a UserInEvent by its ID
    * @auth none
-   * @route {DELETE} /userinevents/{id}
+   * @route {DELETE} /tickets/{id}
    * @param {String} id - The ID of the UserInEvent to delete
    * @returns {Object} The result of the deletion
    */
