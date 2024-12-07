@@ -128,8 +128,8 @@ const userInEventController = {
       // }
 
       //if (evento existe)
-      //const eventExistsResponse = await axios.get(`http://eventservice:5002/api/events/${event_id}`);
-      const eventExistsResponse = await axios.get(`http://localhost:5002/api/events/${event_id}`);
+      const eventExistsResponse = await axios.get(`http://eventservice:5002/api/events/${event_id}`);
+      //const eventExistsResponse = await axios.get(`http://localhost:5002/api/events/${event_id}`);
       if (!eventExistsResponse || !eventExistsResponse.data) {
         return res.status(404).json({ message: 'Event not found' });
       }
@@ -139,8 +139,8 @@ const userInEventController = {
 
       if (event.price && event.price > 0) {
         try {
-          //const paymentResponse = await axios.post(http://paymentservice:5004/api/payments, { 
-          const paymentResponse = await axios.post(`http://localhost:5004/api/payments`, {
+          const paymentResponse = await axios.post(`http://paymentservice:5004/api/payments`, { 
+          //const paymentResponse = await axios.post(`http://localhost:5004/api/payments`, {
             totalValue: event.price,
             ticketID: null, // ticket não foi criado só é associado depois
             paymentType: "Mbway",
