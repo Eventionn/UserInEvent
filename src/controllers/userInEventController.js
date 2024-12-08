@@ -140,7 +140,7 @@ const userInEventController = {
       const ticketPayload = {
         user_id: userId,
         participated: false,
-        event_id: event.eventID,
+        event_id: event_id,
       };
       const newTicket = await userInEventService.createUserInEvent(ticketPayload);
       console.log("Ticket created successfully:", newTicket);
@@ -151,7 +151,7 @@ const userInEventController = {
         try {
           const paymentPayload = {
             totalValue: event.price,
-            ticketID: newTicket.id, 
+            ticketID: newTicket.ticketID, 
             paymentType: undefined,
           };
           const paymentResponse = await axios.post(`http://paymentservice:5004/api/payments`, paymentPayload);
@@ -159,7 +159,7 @@ const userInEventController = {
 
           if (!paymentResponse || !paymentResponse.data) {
             // apaga ticket caso pagamento falhe
-            await userInEventService.deleteUserInEvent(newTicket.id);
+            await userInEventService.deleteUserInEvent(newTicket.ticketID);
             return res.status(503).json({
               message: 'Payment creation failed, payment service is currently unavailable. Please try again later.',
             });
@@ -169,7 +169,7 @@ const userInEventController = {
         } catch (paymentError) {
           console.error("Error during payment creation:", paymentError);
           // apaga ticket caso pagamento falhe
-          await userInEventService.deleteUserInEvent(newTicket.id);
+          await userInEventService.deleteUserInEvent(newTicket.ticketID);
           return res.status(503).json({
             message: 'Payment service is currently unavailable. Please try again later.',
           });
