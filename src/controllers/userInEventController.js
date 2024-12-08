@@ -110,7 +110,7 @@ const userInEventController = {
    * @returns {UserInEvent} The created UserInEvent object
    */
   async createUserInEvent(req, res) {
-    const { event_id, paymentMethod} = req.body;
+    const { event_id} = req.body;
     if (!event_id) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
@@ -148,18 +148,14 @@ const userInEventController = {
       // evento nao for gratis
       if (event.price && event.price > 0) {
 
-        const method = "Undefined";
-        if (!paymentMethod){
-          method = paymentMethod;
-        }
-
         try {
           const paymentPayload = {
             totalValue: event.price,
             ticketID: newTicket.id, 
-            paymentType: method,
+            paymentType: undefined,
           };
           const paymentResponse = await axios.post(`http://paymentservice:5004/api/payments`, paymentPayload);
+          //const paymentResponse = await axios.post(`http://localhost:5004/api/payments`, paymentPayload);
 
           if (!paymentResponse || !paymentResponse.data) {
             // apaga ticket caso pagamento falhe
