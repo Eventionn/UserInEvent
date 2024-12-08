@@ -110,7 +110,7 @@ const userInEventController = {
    * @returns {UserInEvent} The created UserInEvent object
    */
   async createUserInEvent(req, res) {
-    const { event_id} = req.body;
+    const { event_id, paymentMethod} = req.body;
     if (!event_id) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
@@ -120,12 +120,12 @@ const userInEventController = {
       //obter id do user logado
       const userId = req.user.userID;
 
-      //
-      // const userExistss = await axios.get(`http://userservice:5001/api/users/${user_id}`);
-      // console.log("usertttt", userExistss)
-      // if (!userExistss) {
-      //   return res.status(404).json({ message: 'User not found' });
-      // }
+      //  const userExistss = await axios.get(`http://userservice:5001/api/users/${user_id}`);
+      //  //const userExistss = await axios.get(`http://localhost:5002/api/users/${user_id}`);
+      //  console.log("usertttt", userExistss)
+      //  if (!userExistss) {
+      //     return res.status(404).json({ message: 'User not found' });
+      //  }
 
       //if (evento existe)
       const eventExistsResponse = await axios.get(`http://eventservice:5002/api/events/${event_id}`);
@@ -136,38 +136,52 @@ const userInEventController = {
       console.log("Event validation successful:", eventExistsResponse.data);
       const event = eventExistsResponse.data;
 
+      // criar ticket 
+      const ticketPayload = {
+        user_id: userId,
+        participated: false,
+        event_id: event.eventID,
+      };
+      const newTicket = await userInEventService.createUserInEvent(ticketPayload);
+      console.log("Ticket created successfully:", newTicket);
 
+      // evento nao for gratis
       if (event.price && event.price > 0) {
+
+        const method = "Undefined";
+        if (!paymentMethod){
+          method = paymentMethod;
+        }
+
         try {
-          const paymentResponse = await axios.post(`http://paymentservice:5004/api/payments`, { 
-          //const paymentResponse = await axios.post(`http://localhost:5004/api/payments`, {
+          const paymentPayload = {
             totalValue: event.price,
-            ticketID: null, // ticket não foi criado só é associado depois
-            paymentType: "Mbway",
-          });
-  
+            ticketID: newTicket.id, 
+            paymentType: method,
+          };
+          const paymentResponse = await axios.post(`http://paymentservice:5004/api/payments`, paymentPayload);
+
           if (!paymentResponse || !paymentResponse.data) {
+            // apaga ticket caso pagamento falhe
+            await userInEventService.deleteUserInEvent(newTicket.id);
             return res.status(503).json({
-              message: 'Payment creation failed, payment service is currently unavailable. Please try again later.'
+              message: 'Payment creation failed, payment service is currently unavailable. Please try again later.',
             });
           }
-  
+
           console.log("Payment created successfully:", paymentResponse.data);
         } catch (paymentError) {
           console.error("Error during payment creation:", paymentError);
+          // apaga ticket caso pagamento falhe
+          await userInEventService.deleteUserInEvent(newTicket.id);
           return res.status(503).json({
-            message: 'Payment service is currently unavailable. Please try again later.'
+            message: 'Payment service is currently unavailable. Please try again later.',
           });
         }
       }
-  
-      // criar ticket após o pagamento ou se o evento for gratuito
-      req.body.user_id = userId; // usar userId logado
-      req.body.participated = false;
-      req.body.event_id = event.eventID;
-  
-      const newUserInEvent = await userInEventService.createUserInEvent(req.body);
-      res.status(201).json(newUserInEvent);
+
+      // return ticket
+      res.status(201).json(newTicket);
   
     } catch (error) {
       console.error(error);
