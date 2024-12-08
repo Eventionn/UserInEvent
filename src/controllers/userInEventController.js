@@ -156,6 +156,8 @@ const userInEventController = {
           };
           const paymentResponse = await axios.post(`http://paymentservice:5004/api/payments`, paymentPayload);
           //const paymentResponse = await axios.post(`http://localhost:5004/api/payments`, paymentPayload);
+          
+          console.log(paymentResponse);
 
           if (!paymentResponse || !paymentResponse.data) {
             // apaga ticket caso pagamento falhe
