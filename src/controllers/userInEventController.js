@@ -152,7 +152,7 @@ const userInEventController = {
           const paymentPayload = {
             totalValue: event.price,
             ticketID: newTicket.ticketID, 
-            paymentType: undefined,
+            paymentType: "undefined",
           };
           const paymentResponse = await axios.post(`http://paymentservice:5004/api/payments`, paymentPayload);
           //const paymentResponse = await axios.post(`http://localhost:5004/api/payments`, paymentPayload);
