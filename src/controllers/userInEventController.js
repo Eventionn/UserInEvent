@@ -129,9 +129,9 @@ const userInEventController = {
 
       //if (evento existe)
 
-      const eventExistsResponse = await axios.get(`http://eventservice:5002/api/events/${event_id}`);
+      // const eventExistsResponse = await axios.get(`http://eventservice:5002/api/events/${event_id}`);
       // const eventExistsResponse = await axios.get(`http://evention/event/api/events/${event_id}`);
-      //const eventExistsResponse = await axios.get(`http://localhost:5002/api/events/${event_id}`);
+      const eventExistsResponse = await axios.get(`http://localhost:5010/event/api/events/${event_id}`);
       if (!eventExistsResponse || !eventExistsResponse.data) {
         return res.status(404).json({ message: 'Event not found' });
       }
@@ -156,8 +156,8 @@ const userInEventController = {
             ticketID: newTicket.ticketID, 
             paymentType: "undefined",
           };
-          const paymentResponse = await axios.post(`http://paymentservice:5004/api/payments`, paymentPayload);
-          //const paymentResponse = await axios.post(`http://localhost:5004/api/payments`, paymentPayload);
+          // const paymentResponse = await axios.post(`http://paymentservice:5004/api/payments`, paymentPayload);
+          const paymentResponse = await axios.post(`http://localhost:5010/payment/api/payments`, paymentPayload);
           
           console.log(paymentResponse);
 
