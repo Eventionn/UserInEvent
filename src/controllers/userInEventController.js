@@ -131,7 +131,7 @@ const userInEventController = {
 
       // const eventExistsResponse = await axios.get(`http://eventservice:5002/api/events/${event_id}`);
       // const eventExistsResponse = await axios.get(`http://evention/event/api/events/${event_id}`);
-      const eventExistsResponse = await axios.get(`http://localhost:5010/event/api/events/${event_id}`);
+      const eventExistsResponse = await axios.get(`http://nginx-api-gateway:5010/event/api/events/${event_id}`);
       if (!eventExistsResponse || !eventExistsResponse.data) {
         return res.status(404).json({ message: 'Event not found' });
       }
