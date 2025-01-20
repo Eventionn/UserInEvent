@@ -158,7 +158,7 @@ const userInEventController = {
             paymentType: "undefined",
           };
           // const paymentResponse = await axios.post(`http://paymentservice:5004/api/payments`, paymentPayload);
-          const paymentResponse = await axios.post(`http://localhost:5010/payment/api/payments`, paymentPayload);
+          const paymentResponse = await axios.post(`http://nginx-api-gateway:5010/payment/api/payments`, paymentPayload);
           
           console.log(paymentResponse);
 
