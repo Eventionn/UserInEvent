@@ -2,6 +2,7 @@ import { prisma } from '../prismaClient.js';
 import userInEventService from '../services/userInEventService.js';
 import axios from 'axios';
 import QRCode from 'qrcode';
+import https from 'https';
 
 const userInEventController = {
 
@@ -127,12 +128,14 @@ const userInEventController = {
       //     return res.status(404).json({ message: 'User not found' });
       //  }
 
-      //if (evento existe)
+      // Configuração para ignorar certificados autoassinados (apenas para desenvolvimento)
+      const agent = new https.Agent({ rejectUnauthorized: false });
 
-      // const eventExistsResponse = await axios.get(`http://eventservice:5002/api/events/${event_id}`);
-      // const eventExistsResponse = await axios.get(`http://evention/event/api/events/${event_id}`);
-      const eventExistsResponse = await axios.get(`http://nginx-api-gateway:5010/event/api/events/${event_id}`);
-      
+      // const eventExistsResponse = await axios.get(`http://eventservice:5002/api/events/${event_id}`); //local
+      // const eventExistsResponse = await axios.get(`http://evention/event/api/events/${event_id}`);  //pre api gateway
+      //const eventExistsResponse = await axios.get(`http://nginx-api-gateway:5010/event/api/events/${event_id}`);  //api gateway
+      const eventExistsResponse = await axios.get(`https://eventservice:5002/api/events/${event_id}`, { httpsAgent: agent }); //https teste
+
       if (!eventExistsResponse || !eventExistsResponse.data) {
         return res.status(404).json({ message: 'Event not found' });
       }
