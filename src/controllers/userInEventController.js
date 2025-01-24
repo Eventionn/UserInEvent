@@ -135,6 +135,7 @@ const userInEventController = {
       // const eventExistsResponse = await axios.get(`http://evention/event/api/events/${event_id}`);  //pre api gateway
       //const eventExistsResponse = await axios.get(`http://nginx-api-gateway:5010/event/api/events/${event_id}`);  //api gateway
       const eventExistsResponse = await axios.get(`https://eventservice:5002/api/events/${event_id}`, { httpsAgent: agent }); //https teste
+      //const eventExistsResponse = await axios.get(`http://nginx-api-gateway:5010/event/api/events/${event_id}`, { httpsAgent: agent });  //https api gateway
 
       if (!eventExistsResponse || !eventExistsResponse.data) {
         return res.status(404).json({ message: 'Event not found' });
@@ -163,6 +164,8 @@ const userInEventController = {
           // const paymentResponse = await axios.post(`http://paymentservice:5004/api/payments`, paymentPayload);
           //const paymentResponse = await axios.post(`http://nginx-api-gateway:5010/payment/api/payments`, paymentPayload);
           const paymentResponse = await axios.post('https://paymentservice:5004/api/payments', paymentPayload, { httpsAgent: agent }); //https teste
+          //const paymentResponse = await axios.post('https://nginx-api-gateway:5010/payment/api/payments', paymentPayload, { httpsAgent: agent }); //https api gateway
+
           
           console.log(paymentResponse);
 
