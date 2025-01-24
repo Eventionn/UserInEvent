@@ -32,6 +32,10 @@ app.get('/', (req, res) => {
 //});
 
 // Criar servidor HTTPS
-https.createServer({ key, cert }, app).listen(PORT, () => {
+https.createServer({ 
+  key, 
+  cert, 
+  passphrase: 'benfica' // passphrase
+}, app).listen(PORT, () => {
   console.log(`HTTPS server listening on port ${PORT}`);
 });
