@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "/api"
+      "url": "/userinevent/api"
     }
   ],
   "paths": {
