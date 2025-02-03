@@ -93,7 +93,10 @@ const userInEventController = {
         // Configuração para ignorar certificados autoassinados (apenas para desenvolvimento)
         const agent = new https.Agent({ rejectUnauthorized: false });
 
-        const eventExistsResponse = await axios.get(`http://nginx-api-gateway:5010/event/api/events/${eventId}`);  //http api gateway
+        //const eventExistsResponse = await axios.get(`https://localhost:5003/api/tickets/event/${eventId}`);  //http api gateway
+        const eventExistsResponse = await axios.get(`http://localhost:5003/api/tickets/event/${eventId}`);  //http api gateway
+
+        //const eventExistsResponse = await axios.get(`http://nginx-api-gateway:5010/event/api/events/${eventId}`);  //http api gateway
         //const eventExistsResponse = await axios.get(`https://nginx-api-gateway:5010/event/api/events/${eventId}`, { httpsAgent: agent });  //https api gateway
 
         if (!eventExistsResponse || !eventExistsResponse.data) {
