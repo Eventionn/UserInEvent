@@ -155,6 +155,9 @@ const userInEventController = {
         return res.status(404).json({ message: 'Event not found' });
       }
       console.log("Event validation successful:", eventExistsResponse.data);
+      const eventOwnerId = eventData.user_id;
+
+      console.log("Event validation successful:", eventExistsResponse.data);
       const event = eventExistsResponse.data;
 
       // criar ticket 
@@ -165,6 +168,9 @@ const userInEventController = {
       };
       const newTicket = await userInEventService.createUserInEvent(ticketPayload);
       console.log("Ticket created successfully:", newTicket);
+
+      const message = `O usuário ${userId} aderiu ao seu evento "${eventData.name}"!`;
+      await sendNotification(eventOwnerId, message);
 
       // evento nao for gratis
       if (event.price && event.price > 0) {
