@@ -15,6 +15,12 @@ const PORT = process.env.PORT || 3000;
 const key = fs.readFileSync(path.resolve('/usr/src/app/key.pem'));
 const cert = fs.readFileSync(path.resolve('/usr/src/app/cert.pem'));
 
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
+app.options('*', cors());
+
 app.use(express.json());
 app.use('/api', routes);
 
