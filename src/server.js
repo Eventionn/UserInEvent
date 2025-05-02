@@ -6,6 +6,7 @@ import path from 'path';
 import routes from './routes/routes.js';
 import swaggerUi from 'swagger-ui-express';
 import https from 'https';
+import cors from 'cors';
 
 const app = express();
 dotenv.config();
