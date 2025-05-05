@@ -156,9 +156,6 @@ const userInEventController = {
       const newTicket = await userInEventService.createUserInEvent(ticketPayload);
       console.log("Ticket created successfully:", newTicket);
 
-      const message = `O usuário ${userId} aderiu ao seu evento!`;
-      await sendNotification(userId, message);
-
       // evento nao for gratis
       if (event.price && event.price > 0) {
 
