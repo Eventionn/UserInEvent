@@ -16,10 +16,6 @@ const userInEventController = {
     try {
       const userinevents = await userInEventService.getAllUserInEvents();
 
-      if (userinevents == null || userinevents.length === 0) {
-        return res.status(404).json({ message: 'No userinevents found' });
-      }
-
       res.status(200).json(userinevents);
 
     } catch (error) {
@@ -67,10 +63,6 @@ const userInEventController = {
 
       const tickets = await userInEventService.getUserTickets(userId);
 
-      if (tickets == null || tickets.length === 0) {
-        return res.status(404).json({ message: 'No tickets found' });
-      }
-
       res.status(200).json(tickets);
 
     } catch (error) {
@@ -104,10 +96,6 @@ const userInEventController = {
         }
 
         const tickets = await userInEventService.getTicketsByEvent(eventId);
-    
-        if (!tickets) {
-          return res.status(404).json({ message: 'Tickets not found' });
-        }
     
         res.status(200).json(tickets);
   
