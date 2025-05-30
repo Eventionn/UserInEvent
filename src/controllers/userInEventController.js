@@ -70,7 +70,7 @@ const userInEventController = {
       for (const ticket of tickets) {
         try {
           const response = await axios.get(
-            `https://nginx-api-gateway:5010/payment/api/payments/${ticket.id}`,
+            `https://nginx-api-gateway:5010/payment/api/payments/${ticket.ticketID}`,
             { httpsAgent: agent }
           );
   
