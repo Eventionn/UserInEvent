@@ -56,18 +56,48 @@ const userInEventController = {
    */
   async getUserTickets(req, res) {
     try {
-      console.log(req.user)
       const userId = req.user.userID;
-
-      console.log(userId)
-
       const tickets = await userInEventService.getUserTickets(userId);
-
-      res.status(200).json(tickets);
-
+  
+      if (!tickets || tickets.length === 0) {
+        return res.status(404).json({ message: 'No tickets found' });
+      }
+  
+      const validStatusId = "1a2b3c4d-5e6f-7890-abcd-ef1234567890";
+  
+      const filteredTickets = [];
+  
+      for (const ticket of tickets) {
+        try {
+          const response = await axios.get(
+            `https://nginx-api-gateway:5010/payment/api/payments/${ticket.id}`,
+            { httpsAgent: agent }
+          );
+  
+          const payments = response.data;
+  
+          const hasValidPayment = payments.some(payment =>
+            payment.paymentStatus?.paymentStatusID === validStatusId
+          );
+  
+          if (hasValidPayment) {
+            filteredTickets.push(ticket);
+          }
+  
+        } catch (error) {
+          console.error(`Erro ao buscar pagamento para o ticket ${ticket.id}:`, error.message);
+        }
+      }
+  
+      if (filteredTickets.length === 0) {
+        return res.status(404).json({ message: 'No valid paid tickets found' });
+      }
+  
+      return res.status(200).json(filteredTickets);
+  
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error fetching tickets' });
+      console.error("Erro ao obter tickets:", error.message);
+      return res.status(500).json({ message: 'Internal server error' });
     }
   },
 
