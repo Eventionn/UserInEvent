@@ -186,41 +186,44 @@ const userInEventController = {
       const newTicket = await userInEventService.createUserInEvent(ticketPayload);
       console.log("Ticket created successfully:", newTicket);
 
-      // evento nao for gratis
-      if (event.price && event.price > 0) {
+      // const message = `O usuário ${userId} aderiu ao seu evento!`;
+      // await sendNotification(userId, message);
 
-        try {
-          const paymentPayload = {
-            totalValue: event.price,
-            ticketID: newTicket.ticketID, 
-            paymentType: "undefined",
-          };
-          // const paymentResponse = await axios.post(`http://paymentservice:5004/api/payments`, paymentPayload);
-          //const paymentResponse = await axios.post(`http://nginx-api-gateway:5010/payment/api/payments`, paymentPayload);
-          //const paymentResponse = await axios.post('https://paymentservice:5004/api/payments', paymentPayload, { httpsAgent: agent }); //https teste
-          const paymentResponse = await axios.post('https://nginx-api-gateway:5010/payment/api/payments', paymentPayload, { httpsAgent: agent }); //https api gateway
+      // // evento nao for gratis
+      // if (event.price && event.price > 0) {
+
+      //   try {
+      //     const paymentPayload = {
+      //       totalValue: event.price,
+      //       ticketID: newTicket.ticketID, 
+      //       paymentType: "undefined",
+      //     };
+      //     // const paymentResponse = await axios.post(`http://paymentservice:5004/api/payments`, paymentPayload);
+      //     //const paymentResponse = await axios.post(`http://nginx-api-gateway:5010/payment/api/payments`, paymentPayload);
+      //     //const paymentResponse = await axios.post('https://paymentservice:5004/api/payments', paymentPayload, { httpsAgent: agent }); //https teste
+      //     const paymentResponse = await axios.post('https://nginx-api-gateway:5010/payment/api/payments', paymentPayload, { httpsAgent: agent }); //https api gateway
 
           
-          console.log(paymentResponse);
+      //     console.log(paymentResponse);
 
-          if (!paymentResponse || !paymentResponse.data) {
-            // apaga ticket caso pagamento falhe
-            await userInEventService.deleteUserInEvent(newTicket.ticketID);
-            return res.status(503).json({
-              message: 'Payment creation failed, payment service is currently unavailable. Please try again later.',
-            });
-          }
+      //     if (!paymentResponse || !paymentResponse.data) {
+      //       // apaga ticket caso pagamento falhe
+      //       await userInEventService.deleteUserInEvent(newTicket.ticketID);
+      //       return res.status(503).json({
+      //         message: 'Payment creation failed, payment service is currently unavailable. Please try again later.',
+      //       });
+      //     }
 
-          console.log("Payment created successfully:", paymentResponse.data);
-        } catch (paymentError) {
-          console.error("Error during payment creation:", paymentError);
-          // apaga ticket caso pagamento falhe
-          await userInEventService.deleteUserInEvent(newTicket.ticketID);
-          return res.status(503).json({
-            message: 'Payment service is currently unavailable. Please try again later.',
-          });
-        }
-      }
+      //     console.log("Payment created successfully:", paymentResponse.data);
+      //   } catch (paymentError) {
+      //     console.error("Error during payment creation:", paymentError);
+      //     // apaga ticket caso pagamento falhe
+      //     await userInEventService.deleteUserInEvent(newTicket.ticketID);
+      //     return res.status(503).json({
+      //       message: 'Payment service is currently unavailable. Please try again later.',
+      //     });
+      //   }
+      // }
 
       // return ticket
       res.status(201).json(newTicket);
