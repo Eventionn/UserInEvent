@@ -44,6 +44,9 @@ const userInEventService = {
       where: {
         event_id: eventId, 
       },
+      include: {
+        feedback: true,
+      },
     });
   },  
 
