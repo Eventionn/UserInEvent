@@ -62,6 +62,8 @@ const userInEventController = {
       if (!tickets || tickets.length === 0) {
         return res.status(404).json({ message: 'No tickets found' });
       }
+
+      const agent = new https.Agent({ rejectUnauthorized: false });
   
       const validStatusId = "1a2b3c4d-5e6f-7890-abcd-ef1234567890";
   
