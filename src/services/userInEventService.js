@@ -32,6 +32,9 @@ const userInEventService = {
         where: {
           user_id: userId, 
         },
+        include: {
+          event: true // inclui o objeto evento relacionado
+        }
       });
     },
 
